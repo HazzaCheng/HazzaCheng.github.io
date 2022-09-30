@@ -6,6 +6,7 @@ Disallow: /fancybox
 Disallow: /font-awesome
 Disallow: /img
 Disallow: /js
+Disallow: /love_fyy
 Sitemap: http://chengfeng96.com/sitemap.xml
 Sitemap: http://chengfeng96.com/baidusitemap.xml
 
