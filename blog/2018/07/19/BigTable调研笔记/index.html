@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Hazza Cheng" />
+
+
+
+<meta name="description" content="版权声明：本文原创，转载请留意文尾，如有侵权请留言，谢谢 引言 　　BigTable是Google设计的分布式数据存储系统，用来处理海量的数据的一种非关系型的数据库。本文主要针对Google的那篇论文来做一些记录。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BigTable调研笔记">
+<meta property="og:url" content="http://chengfeng96.com/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="零一人生">
+<meta property="og:description" content="版权声明：本文原创，转载请留意文尾，如有侵权请留言，谢谢 引言 　　BigTable是Google设计的分布式数据存储系统，用来处理海量的数据的一种非关系型的数据库。本文主要针对Google的那篇论文来做一些记录。">
+<meta property="og:locale">
+<meta property="og:image" content="http://chengfeng96.com/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/1.png">
+<meta property="og:image" content="http://chengfeng96.com/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/2.jpg">
+<meta property="og:image" content="http://chengfeng96.com/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/3.png">
+<meta property="og:image" content="http://chengfeng96.com/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/4.jpg">
+<meta property="og:image" content="http://chengfeng96.com/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/5.jpg">
+<meta property="og:image" content="http://chengfeng96.com/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/6.jpg">
+<meta property="article:published_time" content="2018-07-19T14:56:45.000Z">
+<meta property="article:modified_time" content="2022-09-28T00:09:25.000Z">
+<meta property="article:author" content="Hazza Cheng">
+<meta property="article:tag" content="MemTable">
+<meta property="article:tag" content="SSTable">
+<meta property="article:tag" content="BigTable">
+<meta property="article:tag" content="row key">
+<meta property="article:tag" content="column key">
+<meta property="article:tag" content="GFS">
+<meta property="article:tag" content="Chubby">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://chengfeng96.com/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/1.png">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="零一人生" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>BigTable调研笔记 | 零一人生</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/"></a></h1>
+        </hgroup>
+
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false" />
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0">读书笔记</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:hazzacheng@gmail.com" title="Email"></a>
+                            
+                                <a class="fa RSS" href="/atom.xml" title="RSS"></a>
+                            
+                                <a class="fa Github" target="_blank" rel="noopener" href="https://github.com/HazzaCheng" title="Github"></a>
+                            
+                                <a class="fa 知乎" target="_blank" rel="noopener" href="https://www.zhihu.com/people/hazzacheng" title="知乎"></a>
+                            
+                                <a class="fa 豆瓣" target="_blank" rel="noopener" href="https://www.douban.com/people/HazzaCheng/" title="豆瓣"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/A/" rel="tag">A*</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AGNES/" rel="tag">AGNES</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AQS/" rel="tag">AQS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AUC/" rel="tag">AUC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Abstract-Factory-Pattern/" rel="tag">Abstract Factory Pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Accumulating-Trace/" rel="tag">Accumulating Trace</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Accuracy/" rel="tag">Accuracy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Acquisition-function/" rel="tag">Acquisition function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Action-Preference-Function/" rel="tag">Action Preference Function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Active-Learning/" rel="tag">Active Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Actor%E2%80%93Critic/" rel="tag">Actor–Critic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AdaBoost/" rel="tag">AdaBoost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Adjoint/" rel="tag">Adjoint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Advantage-Function/" rel="tag">Advantage Function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Amdahl/" rel="tag">Amdahl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Append-only-Tree/" rel="tag">Append-only Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ArrayDeque/" rel="tag">ArrayDeque</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Atomic/" rel="tag">Atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AutoML/" rel="tag">AutoML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/B-Tree/" rel="tag">B+ Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/B-Tree/" rel="tag">B-Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BFS/" rel="tag">BFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BFT/" rel="tag">BFT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BGD/" rel="tag">BGD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BO/" rel="tag">BO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BOHB/" rel="tag">BOHB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BP/" rel="tag">BP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BST/" rel="tag">BST</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bagging/" rel="tag">Bagging</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bandit-learning/" rel="tag">Bandit learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Barrier/" rel="tag">Barrier</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Baum-Welch/" rel="tag">Baum-Welch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bayes-Classifiers/" rel="tag">Bayes Classifiers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bayes-Rule/" rel="tag">Bayes Rule</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bayesian-Estimation/" rel="tag">Bayesian Estimation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bayesian-Linear-Regression/" rel="tag">Bayesian Linear Regression</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bayesian-Network/" rel="tag">Bayesian Network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bayesian-Statistical-Inference/" rel="tag">Bayesian Statistical Inference</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bellman-Expectation-Equation/" rel="tag">Bellman Expectation Equation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bellman-Optimal-Equation/" rel="tag">Bellman Optimal Equation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bellman-Ford/" rel="tag">Bellman-Ford</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bernoulli-Distribution/" rel="tag">Bernoulli Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bernoulli-Process/" rel="tag">Bernoulli Process</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bias-Variance-Decomposition/" rel="tag">Bias-Variance Decomposition</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bias-Variance-Dilemma/" rel="tag">Bias-Variance Dilemma</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Big-Data/" rel="tag">Big Data</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BigTable/" rel="tag">BigTable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Binomial-Distribution/" rel="tag">Binomial Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BlockingQueue/" rel="tag">BlockingQueue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Boosting/" rel="tag">Boosting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Boosting-Tree/" rel="tag">Boosting Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-K-Equation/" rel="tag">C-K Equation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C4-5/" rel="tag">C4.5</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CAP/" rel="tag">CAP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CART/" rel="tag">CART</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CAS/" rel="tag">CAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CASH/" rel="tag">CASH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDF/" rel="tag">CDF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Calculus/" rel="tag">Calculus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Callable/" rel="tag">Callable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Central-Limit-Theorem/" rel="tag">Central Limit Theorem</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Chebyshev-s-Inequality/" rel="tag">Chebyshev&#39;s Inequality</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Chi-Squared-Test/" rel="tag">Chi-Squared Test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Chi-squared-distribution/" rel="tag">Chi-squared distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Chubby/" rel="tag">Chubby</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ClassTag/" rel="tag">ClassTag</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Classical-Statistical-Inference/" rel="tag">Classical Statistical Inference</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Clustering/" rel="tag">Clustering</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Co-training/" rel="tag">Co-training</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CompletionService/" rel="tag">CompletionService</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ConcurrentHashMap/" rel="tag">ConcurrentHashMap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ConcurrentLinkedQueue/" rel="tag">ConcurrentLinkedQueue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ConcurrentModificationException/" rel="tag">ConcurrentModificationException</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Condition-Queue/" rel="tag">Condition Queue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Constrained-Seed-k-means/" rel="tag">Constrained Seed k-means</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Constrained-k-means/" rel="tag">Constrained k-means</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Context-Switching/" rel="tag">Context Switching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CopyOnWriteArrayList/" rel="tag">CopyOnWriteArrayList</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CountDownLatch/" rel="tag">CountDownLatch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Counting/" rel="tag">Counting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DARTS/" rel="tag">DARTS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DARTS-PT/" rel="tag">DARTS+PT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DBSCAN/" rel="tag">DBSCAN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DCL/" rel="tag">DCL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DDPG/" rel="tag">DDPG</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DFS/" rel="tag">DFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DL/" rel="tag">DL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DP/" rel="tag">DP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DPG/" rel="tag">DPG</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DPoS/" rel="tag">DPoS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DQN/" rel="tag">DQN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Daemon-Thread/" rel="tag">Daemon Thread</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Deadlock/" rel="tag">Deadlock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decision-Tree/" rel="tag">Decision Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Density-based-Clustering/" rel="tag">Density-based Clustering</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Deque/" rel="tag">Deque</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Derivative/" rel="tag">Derivative</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dictionary-Learning/" rel="tag">Dictionary Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dijkstra/" rel="tag">Dijkstra</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dimension-Reduction/" rel="tag">Dimension Reduction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Directional-Derivative/" rel="tag">Directional Derivative</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Discrete-Uniform-Distribution/" rel="tag">Discrete Uniform Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Diversity-Enhance/" rel="tag">Diversity Enhance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Diversity-Measure/" rel="tag">Diversity Measure</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dockerfile/" rel="tag">Dockerfile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Double-DQN/" rel="tag">Double DQN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Double-Q-learning/" rel="tag">Double Q-learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dueling-DQN/" rel="tag">Dueling DQN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dutch-Trace/" rel="tag">Dutch Trace</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/EI/" rel="tag">EI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ENAS/" rel="tag">ENAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ERM/" rel="tag">ERM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Edmonds-Karp/" rel="tag">Edmonds-Karp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Eligibility-Trace/" rel="tag">Eligibility Trace</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ensemble-Learning/" rel="tag">Ensemble Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ensemble-Selection/" rel="tag">Ensemble Selection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/EnumMap/" rel="tag">EnumMap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/EnumSet/" rel="tag">EnumSet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Erlang-Distribution/" rel="tag">Erlang Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Error-Rate/" rel="tag">Error Rate</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Escape-Analysis/" rel="tag">Escape Analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Evolutionary-Algorithm/" rel="tag">Evolutionary Algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Exclusive-Locks/" rel="tag">Exclusive Locks</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Executor/" rel="tag">Executor</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ExecutorService/" rel="tag">ExecutorService</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expectation/" rel="tag">Expectation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Exploration-Exploitation-dilemma/" rel="tag">Exploration-Exploitation dilemma</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Exponential-Distribution/" rel="tag">Exponential Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/F1-Measure/" rel="tag">F1 Measure</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FLP/" rel="tag">FLP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Factory-Method-Pattern/" rel="tag">Factory Method Pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fair-DARTS/" rel="tag">Fair DARTS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fair-Lock/" rel="tag">Fair Lock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FairNAS/" rel="tag">FairNAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Feature-Selection/" rel="tag">Feature Selection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FetchFailedException/" rel="tag">FetchFailedException</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Floyd-Warshall/" rel="tag">Floyd-Warshall</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ford-Fulkerson/" rel="tag">Ford-Fulkerson</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Future/" rel="tag">Future</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FutureTask/" rel="tag">FutureTask</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GBDT/" rel="tag">GBDT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GC/" rel="tag">GC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GDBT-NAS/" rel="tag">GDBT-NAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GFS/" rel="tag">GFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GP/" rel="tag">GP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Geometric-Distribution/" rel="tag">Geometric Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Gibbs-Sampling/" rel="tag">Gibbs Sampling</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Gini-Index/" rel="tag">Gini Index</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Gradient/" rel="tag">Gradient</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Gradient-Descent/" rel="tag">Gradient Descent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GreedyNAS/" rel="tag">GreedyNAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HA/" rel="tag">HA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HMM/" rel="tag">HMM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HPO/" rel="tag">HPO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hadoop/" rel="tag">Hadoop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Happens-Before/" rel="tag">Happens-Before</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hash-Based-Shuffle/" rel="tag">Hash-Based Shuffle</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hedged-Read/" rel="tag">Hedged Read</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hermitan-Matrix/" rel="tag">Hermitan Matrix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hierarchical-Clustering/" rel="tag">Hierarchical Clustering</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hinge-Regression/" rel="tag">Hinge Regression</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hoeffding-s-Inequality/" rel="tag">Hoeffding&#39;s Inequality</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hot-Fields/" rel="tag">Hot Fields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HuffmanCode/" rel="tag">HuffmanCode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HyperNet/" rel="tag">HyperNet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hyperband/" rel="tag">Hyperband</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hyperopt/" rel="tag">Hyperopt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hypothesis-Test/" rel="tag">Hypothesis Test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ID3/" rel="tag">ID3</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Imitation-Learning/" rel="tag">Imitation Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Importance-Sampling/" rel="tag">Importance Sampling</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Independence/" rel="tag">Independence</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Information-Entropy/" rel="tag">Information Entropy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Information-Gain/" rel="tag">Information Gain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Information-Gain-Ratio/" rel="tag">Information Gain Ratio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Interruptible-Lock/" rel="tag">Interruptible Lock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Isometry/" rel="tag">Isometry</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jensen-s-Inequality/" rel="tag">Jensen&#39;s  Inequality</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Johnson/" rel="tag">Johnson</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K-armed-bandit/" rel="tag">K-armed bandit</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K-means/" rel="tag">K-means</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KLDA/" rel="tag">KLDA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KMP/" rel="tag">KMP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KPCA/" rel="tag">KPCA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KTT/" rel="tag">KTT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel-Function/" rel="tag">Kernel Function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kruskal/" rel="tag">Kruskal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LASSO/" rel="tag">LASSO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LATE/" rel="tag">LATE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LCS/" rel="tag">LCS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LDA/" rel="tag">LDA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLMS/" rel="tag">LLMS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LMS/" rel="tag">LMS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LSM/" rel="tag">LSM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LSTD/" rel="tag">LSTD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LSTM/" rel="tag">LSTM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LVQ/" rel="tag">LVQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LVW/" rel="tag">LVW</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lagrange-Multiplier/" rel="tag">Lagrange Multiplier</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laplacian-Correction/" rel="tag">Laplacian Correction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lasso-Regression/" rel="tag">Lasso Regression</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Latch/" rel="tag">Latch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Law-of-Large-Numbers/" rel="tag">Law of Large Numbers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Least-Squares/" rel="tag">Least Squares</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LightGBM/" rel="tag">LightGBM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Likelihood-Ratio/" rel="tag">Likelihood Ratio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linear-Algebra/" rel="tag">Linear Algebra</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linear-Regression/" rel="tag">Linear Regression</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LinkedList/" rel="tag">LinkedList</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Livelock/" rel="tag">Livelock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lock-Coarsening/" rel="tag">Lock Coarsening</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lock-Contention/" rel="tag">Lock Contention</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lock-Granularity/" rel="tag">Lock Granularity</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lock-Scope/" rel="tag">Lock Scope</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lock-Striping/" rel="tag">Lock Striping</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Logistic-Regression/" rel="tag">Logistic Regression</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MAP/" rel="tag">MAP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MDP/" rel="tag">MDP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MDS/" rel="tag">MDS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ML/" rel="tag">ML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MLE/" rel="tag">MLE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MRv1/" rel="tag">MRv1</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MSE/" rel="tag">MSE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MST/" rel="tag">MST</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Macro-Average/" rel="tag">Macro Average</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mark-Word/" rel="tag">Mark Word</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markov-Chain/" rel="tag">Markov Chain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markov-chain/" rel="tag">Markov chain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markov-s-Inequality/" rel="tag">Markov&#39;s Inequality</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Math/" rel="tag">Math</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Matrix-Completion/" rel="tag">Matrix Completion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mean/" rel="tag">Mean</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MemTable/" rel="tag">MemTable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Memory-Synchronization/" rel="tag">Memory Synchronization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Memory-Bank/" rel="tag">Memory-Bank</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Micro-Average/" rel="tag">Micro Average</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mixture-of-Gaussian/" rel="tag">Mixture-of-Gaussian</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Monte-Carlo-Learning/" rel="tag">Monte Carlo Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Monte-Carlo-Methods/" rel="tag">Monte Carlo Methods</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Morris-Traversal/" rel="tag">Morris Traversal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Multivariate-Decision-Tree/" rel="tag">Multivariate Decision Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mysql/" rel="tag">Mysql</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NAO/" rel="tag">NAO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NAS/" rel="tag">NAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NASNet/" rel="tag">NASNet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NASP/" rel="tag">NASP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NSGA-II/" rel="tag">NSGA-II</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Naive-Bayes-Classifiers/" rel="tag">Naive Bayes Classifiers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NoisyDARTS/" rel="tag">NoisyDARTS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Normal/" rel="tag">Normal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Normal-Distribution/" rel="tag">Normal Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ODE/" rel="tag">ODE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Observer-Pattern/" rel="tag">Observer Pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/One-Shot/" rel="tag">One-Shot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Open-Call/" rel="tag">Open Call</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimistic-Lock/" rel="tag">Optimistic Lock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/P-DARTS/" rel="tag">P-DARTS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PAC/" rel="tag">PAC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PBFT/" rel="tag">PBFT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PC-DARTS/" rel="tag">PC-DARTS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PCA/" rel="tag">PCA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PDF/" rel="tag">PDF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PGD/" rel="tag">PGD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PI/" rel="tag">PI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PMF/" rel="tag">PMF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PR/" rel="tag">PR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Partial-Derivative/" rel="tag">Partial Derivative</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pascal-Distribution/" rel="tag">Pascal Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Paxos/" rel="tag">Paxos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pessimistic-Lock/" rel="tag">Pessimistic Lock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Piggyback/" rel="tag">Piggyback</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PoS/" rel="tag">PoS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PoW/" rel="tag">PoW</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Poison-Pill/" rel="tag">Poison Pill</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Poisson-Distribution/" rel="tag">Poisson Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Policy-Gradient/" rel="tag">Policy Gradient</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Polled-Lock/" rel="tag">Polled Lock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Possion-Process/" rel="tag">Possion Process</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Precision/" rel="tag">Precision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Prim/" rel="tag">Prim</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Probability/" rel="tag">Probability</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Protoytpe-based-Clustering/" rel="tag">Protoytpe-based Clustering</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ProxylessNAS/" rel="tag">ProxylessNAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Publish-Subscribe-Pattern/" rel="tag">Publish-Subscribe Pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Q-learning/" rel="tag">Q-learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/REINFORCE/" rel="tag">REINFORCE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RIP/" rel="tag">RIP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RL/" rel="tag">RL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RMQ/" rel="tag">RMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RNN/" rel="tag">RNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ROAR/" rel="tag">ROAR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ROC/" rel="tag">ROC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raft/" rel="tag">Raft</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Random-Forest/" rel="tag">Random Forest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Rayleigh-quotient/" rel="tag">Rayleigh quotient</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Read-Write-Lock/" rel="tag">Read-Write Lock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Recall/" rel="tag">Recall</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReenTrantLock/" rel="tag">ReenTrantLock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reentrant-Lock/" rel="tag">Reentrant Lock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReentrantReadWriteLock/" rel="tag">ReentrantReadWriteLock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reinforcement-Learning/" rel="tag">Reinforcement Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Relief/" rel="tag">Relief</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Relief-F/" rel="tag">Relief-F</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reordering/" rel="tag">Reordering</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Replacing-Trace/" rel="tag">Replacing Trace</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Robbins-Monro/" rel="tag">Robbins-Monro</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/S3VM/" rel="tag">S3VM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SAMR/" rel="tag">SAMR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SARSA/" rel="tag">SARSA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SGD/" rel="tag">SGD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SHAP/" rel="tag">SHAP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SMAC/" rel="tag">SMAC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SMASH/" rel="tag">SMASH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SMBO/" rel="tag">SMBO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SMO/" rel="tag">SMO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SNAS/" rel="tag">SNAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SPFA/" rel="tag">SPFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SPOS/" rel="tag">SPOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SRM/" rel="tag">SRM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSTable/" rel="tag">SSTable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SVD/" rel="tag">SVD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SVM/" rel="tag">SVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SVR/" rel="tag">SVR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sarsa/" rel="tag">Sarsa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Saturation-Policies/" rel="tag">Saturation Policies</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Self-Adjont/" rel="tag">Self-Adjont</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Semaphore/" rel="tag">Semaphore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Semi-Gradient-Descent/" rel="tag">Semi-Gradient Descent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Semi-naive-Bayes-Classifiers/" rel="tag">Semi-naive Bayes Classifiers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Semi-supervised-Learning/" rel="tag">Semi-supervised Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SemiNAS/" rel="tag">SemiNAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sequential-Consistency/" rel="tag">Sequential Consistency</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shuffle/" rel="tag">Shuffle</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shutdown-Hock/" rel="tag">Shutdown Hock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Significance-Test/" rel="tag">Significance Test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Simple-Factory-Pattern/" rel="tag">Simple Factory Pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Single-Path/" rel="tag">Single Path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SinglePath/" rel="tag">SinglePath</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SnowFlake/" rel="tag">SnowFlake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Softmax/" rel="tag">Softmax</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sort-Based-Shuffle/" rel="tag">Sort-Based Shuffle</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark-SQL/" rel="tag">Spark SQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sparse-Coding/" rel="tag">Sparse Coding</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sparse-Representation/" rel="tag">Sparse Representation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sparse-Table/" rel="tag">Sparse Table</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spectral-Theorem/" rel="tag">Spectral Theorem</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Speculative-Task/" rel="tag">Speculative Task</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Stack/" rel="tag">Stack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Starvation/" rel="tag">Starvation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Statistics/" rel="tag">Statistics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Stochastic-Process/" rel="tag">Stochastic Process</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Strategy-Pattern/" rel="tag">Strategy Pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Strong-Law-of-Large-Numbers/" rel="tag">Strong Law of Large Numbers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Student-s-t-distribution/" rel="tag">Student&#39;s t-distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SuccessiveHalving/" rel="tag">SuccessiveHalving</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Supervised-Learning/" rel="tag">Supervised Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Synchronizer/" rel="tag">Synchronizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TD3/" rel="tag">TD3</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TPE/" rel="tag">TPE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TSVM/" rel="tag">TSVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Temporal-Difference-Learning/" rel="tag">Temporal Difference Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Temporal-Difference-Learning/" rel="tag">Temporal-Difference Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ThreadLocal/" rel="tag">ThreadLocal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ThreadPoolExecutor/" rel="tag">ThreadPoolExecutor</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Timed-Lock/" rel="tag">Timed Lock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Total-Derivative/" rel="tag">Total Derivative</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Total-Probability-Theorem/" rel="tag">Total Probability Theorem</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tungsten-Sort-Shuffle/" rel="tag">Tungsten-Sort Shuffle</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UCB/" rel="tag">UCB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Uniform-Distribution/" rel="tag">Uniform Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Unitary-Matrix/" rel="tag">Unitary Matrix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Univariate-Decision-Tree/" rel="tag">Univariate Decision Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Unsupervised-Learning/" rel="tag">Unsupervised Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Variance/" rel="tag">Variance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VisualVM/" rel="tag">VisualVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Viterbi/" rel="tag">Viterbi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Weak-Law-of-Large-Numbers/" rel="tag">Weak Law of Large Numbers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Weight-Sharing/" rel="tag">Weight Sharing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Weights-Sharing/" rel="tag">Weights Sharing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Work-Stealing/" rel="tag">Work Stealing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XGBoost/" rel="tag">XGBoost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/abstract-class/" rel="tag">abstract class</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/adjacency-matrix/" rel="tag">adjacency matrix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/" rel="tag">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/augmenting-path/" rel="tag">augmenting path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/big-data/" rel="tag">big data</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/big-integer/" rel="tag">big integer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bilevel-optimization/" rel="tag">bilevel optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bit-manipulation/" rel="tag">bit manipulation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blockchain/" rel="tag">blockchain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/builder/" rel="tag">builder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/char/" rel="tag">char*</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud-cmputing/" rel="tag">cloud cmputing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud-computing/" rel="tag">cloud computing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/column-key/" rel="tag">column key</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/constructor/" rel="tag">constructor</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/context-bounds/" rel="tag">context bounds</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/contravariance/" rel="tag">contravariance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/covariance/" rel="tag">covariance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structure/" rel="tag">data structure</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/decoder/" rel="tag">decoder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deserializing/" rel="tag">deserializing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/direct-memory/" rel="tag">direct memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/divide-and-conquer/" rel="tag">divide and conquer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/encoder/" rel="tag">encoder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/epectation-Maximization-Algorithm/" rel="tag">epectation-Maximization Algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/epsilon-Greedy/" rel="tag">epsilon-Greedy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/equals/" rel="tag">equals</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/every-visit-Monte-Carlo-update/" rel="tag">every visit Monte Carlo update</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/existential-type/" rel="tag">existential type</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/experience-repaly/" rel="tag">experience repaly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/exploring-start/" rel="tag">exploring start</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/fast-matrix-exponentiation/" rel="tag">fast matrix exponentiation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/first-visit-Monte-Carlo-update/" rel="tag">first visit Monte Carlo update</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-approximation/" rel="tag">function approximation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/functional-programming/" rel="tag">functional programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/generalized-suffix-tree/" rel="tag">generalized suffix tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/" rel="tag">go</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/graph/" rel="tag">graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/graph-database/" rel="tag">graph database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/greedy/" rel="tag">greedy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/handle/" rel="tag">handle</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/heuristic-approaches/" rel="tag">heuristic approaches</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/higher-kinded-types/" rel="tag">higher kinded types</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/history-server/" rel="tag">history server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/history-sever/" rel="tag">history sever</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/id/" rel="tag">id</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/images/" rel="tag">images</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/immutable/" rel="tag">immutable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/implicit/" rel="tag">implicit</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inorder/" rel="tag">inorder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/interrupt/" rel="tag">interrupt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invariance/" rel="tag">invariance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invokeAll/" rel="tag">invokeAll</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java-bean/" rel="tag">java bean</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jinfo/" rel="tag">jinfo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jmao/" rel="tag">jmao</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jps/" rel="tag">jps</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jstack/" rel="tag">jstack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jstat/" rel="tag">jstat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/leveldb/" rel="tag">leveldb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log4j/" rel="tag">log4j</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/manifest/" rel="tag">manifest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maximum-bipartite-matching/" rel="tag">maximum bipartite matching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maxium-flow/" rel="tag">maxium flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mutiply-inheritance/" rel="tag">mutiply inheritance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/newTaskFor/" rel="tag">newTaskFor</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/object-pool/" rel="tag">object pool</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/object-serialization/" rel="tag">object serialization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/off-policy/" rel="tag">off-policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/on-policy/" rel="tag">on-policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/override/" rel="tag">override</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path-dependent-type/" rel="tag">path-dependent type</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/policy-evaluation/" rel="tag">policy evaluation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/policy-gradient/" rel="tag">policy gradient</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/policy-improvement/" rel="tag">policy improvement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/policy-iteration/" rel="tag">policy iteration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/postorder/" rel="tag">postorder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/preorder/" rel="tag">preorder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reachability-analysis/" rel="tag">reachability analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/readObject/" rel="tag">readObject</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/readResolve/" rel="tag">readResolve</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reference-chain/" rel="tag">reference chain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reference-counting/" rel="tag">reference counting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reflect/" rel="tag">reflect</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rm/" rel="tag">rm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/row-key/" rel="tag">row key</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/" rel="tag">scala</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/segment-tree/" rel="tag">segment tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/semaphore/" rel="tag">semaphore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sequence-to-sequence/" rel="tag">sequence-to-sequence</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/serialization-proxy-pattern/" rel="tag">serialization proxy pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/serializing/" rel="tag">serializing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/singleton/" rel="tag">singleton</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/skiplist/" rel="tag">skiplist</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/soft-policy/" rel="tag">soft policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sort/" rel="tag">sort</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/specialized-method/" rel="tag">specialized method</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/static-factory-method/" rel="tag">static factory method</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/structural-type/" rel="tag">structural type</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sudo/" rel="tag">sudo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tail-recursion/" rel="tag">tail recursion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/target-network/" rel="tag">target network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tee/" rel="tag">tee</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/telescoping-Constructor/" rel="tag">telescoping Constructor</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trait/" rel="tag">trait</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tree/" rel="tag">tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/type/" rel="tag">type</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/type-projection/" rel="tag">type projection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unconfigurableExecutorService/" rel="tag">unconfigurableExecutorService</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/value-iteration/" rel="tag">value iteration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/variable-length-code/" rel="tag">variable-length code</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/variance/" rel="tag">variance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-bounds/" rel="tag">view bounds</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/" rel="tag">vim</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/writeObject/" rel="tag">writeObject</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/writeReplace/" rel="tag">writeReplace</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yum/" rel="tag">yum</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%8D%E5%BF%85%E8%A6%81%E5%AF%B9%E8%B1%A1/" rel="tag">不必要对象</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%AA%E5%AD%97%E8%8A%82%E6%B5%81%E6%94%BB%E5%87%BB/" rel="tag">伪字节流攻击</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E9%83%A8%E5%9F%9F%E7%9B%97%E7%94%A8%E6%94%BB%E5%87%BB/" rel="tag">内部域盗用攻击</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%AF%E4%BC%B8%E7%BC%A9/" rel="tag">可伸缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8%E5%8F%91%E5%B8%83/" rel="tag">安全发布</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%9A%E4%B8%BE/" rel="tag">枚举</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%88%E5%B0%81%E9%97%AD/" rel="tag">栈封闭</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AD%96%E7%95%A5%E6%9E%9A%E4%B8%BE/" rel="tag">策略枚举</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B4%A2%E5%BC%95/" rel="tag">索引</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/" rel="tag">虚拟化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%87%E6%9C%9F%E5%AF%B9%E8%B1%A1/" rel="tag">过期对象</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%80%B8%E5%87%BA/" rel="tag">逸出</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%87%8D%E5%85%A5/" rel="tag">重入</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%87%8D%E6%8E%92%E5%BA%8F/" rel="tag">重排序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%90%E5%BC%8F%E4%BD%9C%E7%94%A8%E5%9F%9F/" rel="tag">隐式作用域</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%90%E5%BC%8F%E5%8F%82%E6%95%B0/" rel="tag">隐式参数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%90%E5%BC%8F%E8%A7%86%E5%9B%BE/" rel="tag">隐式视图</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%90%E5%BC%8F%E8%BD%AC%E6%8D%A2/" rel="tag">隐式转换</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://github.com/">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://www.google.com/">Google</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://stackoverflow.com/">StackOverflow</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://leetcode.com/problemset/algorithms/">LeetCode</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://www.youtube.com/">YouTube</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">什么都想学，什么都学不会。</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页"></a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页"></a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0">读书笔记</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:hazzacheng@gmail.com" title="Email"></a>
+                            
+                                <a class="fa RSS" target="_blank" href="/atom.xml" title="RSS"></a>
+                            
+                                <a class="fa Github" target="_blank" href="https://github.com/HazzaCheng" title="Github"></a>
+                            
+                                <a class="fa 知乎" target="_blank" href="https://www.zhihu.com/people/hazzacheng" title="知乎"></a>
+                            
+                                <a class="fa 豆瓣" target="_blank" href="https://www.douban.com/people/HazzaCheng/" title="豆瓣"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-BigTable调研笔记" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/" class="article-date">
+      <time datetime="2018-07-19T14:56:45.000Z" itemprop="datePublished">2018-07-19</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      BigTable调研笔记
+    </h1>
+  
+
+        <div style="margin-top:10px;">
+    <span class="post-time">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-keyboard-o"></i>
+        <span class="post-meta-item-text">  字数统计: </span>
+        <span class="post-count">7.5k 字</span>
+      </span>
+    </span>
+
+    <span class="post-time">
+      &nbsp; | &nbsp;
+      <span class="post-meta-item-icon">
+        <i class="fa fa-hourglass-half"></i>
+        <span class="post-meta-item-text">  阅读时长: </span>
+        <span class="post-count">26 分</span>
+      </span>
+    </span>
+
+    
+        <span id="busuanzi_container_page_pv">
+          &nbsp; | &nbsp;  本文总阅读量: <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+    
+</div>
+
+        <br>
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><a class="article-category-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/BigTable/">BigTable</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BigTable/" rel="tag">BigTable</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Chubby/" rel="tag">Chubby</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/GFS/" rel="tag">GFS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MemTable/" rel="tag">MemTable</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSTable/" rel="tag">SSTable</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/column-key/" rel="tag">column key</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/row-key/" rel="tag">row key</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p><strong><em>版权声明：本文原创，转载请留意文尾，如有侵权请留言，谢谢</em></strong></p>
+<h1 id="引言">引言</h1>
+<p>　　BigTable是Google设计的分布式数据存储系统，用来处理海量的数据的一种非关系型的数据库。本文主要针对Google的那篇论文来做一些记录。</p>
+<span id="more"></span>
+<h1 id="data-model">Data Model</h1>
+<p>　　Bigtable不是关系型数据库，但是却沿用了很多关系型数据库的术语，像table（表）、row（行）、column（列）等。本质上说，Bigtable是一个键值（key-value）映射。按作者的说法，Bigtable是一个稀疏的，分布式的，持久化的，多维的排序映射。<br>
+　　Bigtable的键有三维，分别是行键（row key）、列键（column
+key）和时间戳（timestamp），行键和列键都是字节串，时间戳是64位整型；而值是一个字节串。可以用<span class="math inline">\((row:string, column:string, time:int64) \to
+string\)</span>来表示一条键值对记录。</p>
+<p><img src="/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/1.png"></p>
+<h2 id="rows">Rows</h2>
+<p>　　行键可以是任意字节串，通常有10-100字节。<strong>行的读写都是原子性的</strong>。Bigtable按照行键的字典序存储数据。Bigtable的表会根据行键自动划分为片（tablet），片是负载均衡的单元。最初表都只有一个片，但随着表不断增大，片会自动分裂，片的大小控制在100-200MB。行是表的第一级索引，我们可以把该行的列、时间和值看成一个整体。</p>
+<h2 id="column-families">Column Families</h2>
+<p>　　列是第二级索引，每行拥有的列是不受限制的，可以随时增加减少。为了方便管理，列被分为多个列族（column
+family，是访问控制的单元），一个列族里的列一般存储相同类型的数据。一行的列族很少变化，但是列族里的列可以随意添加删除。列键按照family:qualifier格式命名的。这次我们将列拿出来，将时间和值看成一个整体，简化为二维键值映射。</p>
+<h2 id="timestamp">TimeStamp</h2>
+<p>　　时间戳是第三级索引。Bigtable允许保存数据的多个版本，版本区分的依据就是时间戳。时间戳可以由Bigtable赋值，代表数据进入Bigtable的准确时间，也可以由客户端赋值。数据的不同版本按照时间戳降序存储，因此先读到的是最新版本的数据。我们加入时间戳后，就得到了Bigtable的完整数据模型。</p>
+<p>　　就和上面那个图表示的一样，<strong>BigTable是个三层的存储模型</strong>。</p>
+<h1 id="building-blocks">Building Blocks</h1>
+<p>　　BigTable是构建在其他几个Google基础设施之上的。</p>
+<h2 id="gfs">GFS</h2>
+<p>　　BigTable使用了分布式Google文件系统（GFS）来存储日志和数据文件。BigTable的一个簇通常在一个共享机器池内进行操作，这个共享机器池会运行其他一些分布式应用。BigTable的进程通常和其他应用的进程共享同样的机器。BigTable依赖一个簇管理系统来调度作业、在共享机器上调度资源、处理机器失败和监督机器状态。</p>
+<h2 id="sstable">SSTable</h2>
+<p>　　Google
+SSTable文件格式作为存储BigTable数据的内部格式。一个SSTable提供一个持久化的、排序的、不可变的、从键到值的映射，其中，键和值都是任意的字节字符串。BigTable提供了查询与一个指定键相关的值的操作，以及在一个指定的键区间内遍历所有的“键/值对”的操作。在内部，每个SSTable都包含一个块序列。通常，每个块是64KB，不过块尺寸是可配置的。存储在SSTable结尾的块索引，可以用来快速定位块的位置。当SSTable被打开时，块索引就会被读入内存。一个查询操作只需要进行一次磁盘扫描，我们首先在内存的块索引当中使用二分查找方法找到合适的块，然后从磁盘中读取相应的块。可选地，一个SSTable可以被完全读入内存，这样，我们在进行查找操作时，就不需要读取磁盘。</p>
+<h2 id="chubby">Chubby</h2>
+<p>　　BigTable依赖一个高可用的、持久性的分布式锁服务Chubby。一个Chubby服务包含5个动态副本，其中一个被选作主副本对外提供服务。当大部分副本处于运行状态并且能够彼此通信时，这个服务就是可用的。Chubby使用<strong>Paxos算法</strong>来使它的副本在失败时保持一致性。Chubby提供了一个名字空间，它包含了目录和小文件。每个目录和文件可以被用作一个锁，针对文件的读和写操作都是原子的。Chubby客户端函数库提供了针对Chubby文件的持久性缓存。每个Chubby客户端维护一个session，这个session具备Chubby服务。如果租约过期以后不能及时更新session的租约，那么这个客户端的session就会过期。当一个客户端的session过期时，它会丢失所有锁，并且放弃句柄。Chubby客户端也可以注册针对Chubby文件和目录的回调服务（callback），从而通知session过期或其他变化。<br>
+　　BigTable使用Chubby来完成许多任务：</p>
+<ol type="1">
+<li>保证在每个时间点只有一个主副本是活跃的</li>
+<li>来存储BigTable数据的bootstrap的位置</li>
+<li>来发现tablet服务器</li>
+<li>宣告tablet服务器死亡</li>
+<li>存储BigTable模式信息（即每个表的列家族信息）</li>
+<li>存储访问控制列表。</li>
+</ol>
+<p>　如果在一段时间以后，Chubby变得不可用，BigTable就不可用了。</p>
+<h1 id="implementation">Implementation</h1>
+<p>　　BigTable实现包括三个主要的功能组件：</p>
+<ol type="1">
+<li>库函数：链接到每个客户端</li>
+<li>一个主服务器</li>
+<li>许多Tablet服务器。</li>
+</ol>
+<p>　　Tablet服务器可以根据工作负载的变化，从一个簇中动态地增加或删除。主服务器负责把Tablet分配到Tablet服务器，探测Tablet服务器的增加和过期，进行Table服务器的负载均衡，以及GFS文件系统中的垃圾收集。除此以外，它还处理模式变化，比如表和列家族创建。<br>
+　　每个Tablet服务器管理一个Tablet集合，通常，在每个Tablet服务器上，我们会放置10到1000个Tablet。Tablet服务器处理针对那些已经加载的Tablet而提出的读写请求，并且会对过大的Tablet进行划分。<br>
+　　就像许多单服务器分布式存储系统一样，客户端并不是直接从主服务器读取数据，而是直接从Tablet服务器上读取数据。因为BigTable客户端并不依赖于主服务器来获得Tablet的位置信息，所以，大多数客户端从来不和主服务器通信。从而使得在实际应用中，主服务器负载很小。<br>
+　　一个BigTable簇存储了许多表。每个表都是一个Tablet集合，每个Tablet包含了位于某个域区间内的所有数据。在最初阶段，每个表只包含一个Tablet。随着表的增长，它会被自动分解成许多Tablet，每个Tablet默认尺寸大约是100到200MB。<br>
+　　大体结构如下图所示：</p>
+<p><img src="/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/2.jpg"></p>
+<h2 id="tablet-location">Tablet Location</h2>
+<p>　　如下图所示，BigTable使用了一个<strong>类似于B+树的三层架构</strong>，来存储Tablet位置信息。</p>
+<p><img src="/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/3.png"></p>
+<p>　　第一个层次是一个文件，存储在Chubby中，它包含了Root
+Tablet的位置信息。Root
+Tablet把Tablet的所有位置信息都保存在一个特定的METADATA表中。每个METADATA表都包含了一个user
+tablet集合的位置信息。Root
+Tablet其实就是METADATA表当中的第一个Tablet，但是，它被区别对待，它在任何情况下都不会被拆分，从而保证Tablet位置层次结构不会超过三层。<br>
+　　METADATA表存储了属于某个行键的Tablet的位置信息，所谓行键，就是关于Tablet表标识符和它的最后一行这二者的编码。每个METADATA行，大约在内存中存储了1KB的数据。由于采用了128M大小的METADATA
+Tablet的适当限制，我们的三层位置模式足够用来存放2的34此方的Tablet的位置信息。<br>
+　　客户端函数库会缓存Tablet位置信息。如果客户端不知道一个Tablet的位置信息，或者它发现，它所缓存的Tablet位置信息部正确，那么，它就会在Tablet位置层次结构中依次向上寻找。如果客户端缓存是空的，那么定位算法就需要进行三次轮询，其中就包括一次从Chubby中读取信息。如果客户端的缓存是过期的，定位算法就要进行六次轮询，因为，只有在访问无效的时候才会发现缓存中某个entry是过期的（这里假设METADATA
+Tablets不会频繁移动）。虽然，Tablets位置信息是保存在缓存中，从而不需要访问GFS，但是，我们仍然通过让客户端库函数预抓取tablet位置信息，来进一步减少代价，具体方法是：每次读取METADATA表时，都要读取至少两条以上的Tablet位置信息。<br>
+　　我们也在METADATA表中存储了二级信息，包括一个日志，它记载了和每个tablet有关的所有事件，比如，一个服务器什么时候开始提供这个tablet服务。这些信息对于性能分析和程序调试是非常有用的。</p>
+<h2 id="tablet-assignment">Tablet Assignment</h2>
+<p>　　每个Tablet可以被分配到一个tablet服务器。主服务器跟踪tablet服务器的情况，掌握当前tablet被分配到tablet服务器的情况，其中包括哪个tablet还没有被分配。当一个tablet没有被分配，并且一个具有足够空间可以容纳该tablet的tablet服务器是可用时，主服务器就把当前这个tablet分配给这个tablet服务器，主服务器会向tablet服务器发送一个tablet负载请求。<br>
+　　BigTable使用Chubby来跟踪tablet服务器。当一个Tablet服务器启动的时候，它创建并且获得一个独占的排他锁，这个锁会锁住一个特定的Chubby目录中的一个唯一命名的文件。主服务器监视这个目录（服务器目录），来发现tablet服务器。如果一个tablet服务器停止服务，它就会丢失这个锁，比如，由于网络故障，导致这个tablet服务器丢失了这个Chubby会话。（Chubby提供了一个完善的机制，来允许一个tablet服务器检查自己是否已经丢失了这个独占排他锁）。如果丢失了锁，那么，只要目录中的这个文件还存在，那么一个tablet服务器就会努力去获得这个锁。如果文件不再存在，那么，这个tablet服务器就不再能够对外提供服务，因此，它就自杀。一旦一个tablet服务器终止了服务（比如，簇管理系统把这个tablet服务器从簇中移除），它就会努力释放锁，这样，主服务器就可以更快地重新分配这个tablet。<br>
+　　主服务器需要探测，什么时候tablet服务器不再提供tablet服务，并且要负责尽快对这些tablet进行重新分配。为了探测什么时候tablet服务器不再提供tablet服务，主服务器会周期性地询问每个tablet服务器，了解他们的锁的状态。如果一个tablet服务器报告，它已经丢失了锁；或者，在最近的几次尝试中，主服务器都无法与tablet服务器取得联系，主服务器就会努力获得一个针对这个服务器文件的独占排他锁。如果主服务器可以获得这个锁，那么，Chubby就是可用的，相应地，这个tablet服务器或者已经死亡，或者有些故障导致它无法到达Chubby。因此，主服务器就从Chubby中删除这个tablet服务器的文件，从而确保这个tablet服务器不再能够提供服务。<strong>一旦一个服务器文件被删除，主服务器就可以把所有以前分配给该服务器的tablet，都移动到“待分配”tablet集合。</strong>为了保证一个BigTable簇不会轻易受到主服务器和Chubby之间的网络故障的影响，如果一个主服务器的Chubby会话过期了，这个主服务器就会自杀。但是，正如上所述，主服务器失效，不会改变tablet到table的分配。<br>
+　　当一个主服务器被簇管理系统启动时，在它能够改变tablet分配之前，它必须首先了解当前的tablet分配信息。为此，在启动的时候，主服务器会执行以下步骤：</p>
+<ul>
+<li>主服务器在Chubby中抓取一个独特的master
+lock，这就防止了多个主服务器并发启动的情形。</li>
+<li>主服务器扫描Chubby中的服务器目录，从而发现当前可用的服务器。</li>
+<li>主服务器和当前每个可用的tablet服务器通信，来发现哪些tablets已经被分配到哪个tablet服务器。</li>
+<li>主服务器扫描METADATA表来学习tablets表集合。一旦在扫描过程中，主服务器发现某个tablet还没有被分配，主服务器就把这个tablet放置到“待分配”tablet集合，这就使得这些tablet可以进入待分配状态。</li>
+</ul>
+<p>　　一个比较复杂的情况是，在METADATA
+tablets被分配之前，我们是不能扫描METADATA表的。因此，在开始扫描（步骤4）之前，如果主服务器在步骤3的扫描中发现root
+tablet没有被发现，主服务器把root
+tablet增加到待分配tablet集合。这个增加，保证了root
+tablet一定会被分配。因为，root tablet包含了所有METADATA
+tablets的名字。<strong>主服务器只有在扫描了root
+tablet以后，才可能知道所有这些METADATA tablets的名字。</strong><br>
+　　现有的tablet集合，只有在以下情形才会发生改变：</p>
+<ul>
+<li>当一个tablet被创建或删除；</li>
+<li>对两个现有的tablet进行合并得到一个更大的tablet；</li>
+<li>一个现有的tablet被分割成两个较小的tablet。主服务器可以跟踪这些变化。Tablet分裂会被特殊对待，因为，它是由一个tablet服务器发起的。Tablet服务器通过把信的tablet信息记录在METADATA表中，来提交分裂操作。当分裂被提交以后，这个tablet服务器会通知主服务器。为了防止分裂通知丢失（或者由于主服务器死亡或者由于tablet服务器死亡），当主服务器要求一个tablet服务器加载已经被分裂的tablet时，主服务器会对这个新的tablet进行探测。Tablet服务器会把分裂的情况告知主服务器，因为，它在METADATA表中所找到的tablet
+entry，只能确定主服务器要求它加载的数据的一部分。</li>
+</ul>
+<h2 id="tablet-serving">Tablet Serving</h2>
+<p><img src="/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/4.jpg"></p>
+<p>　　一个tablet的持久化存储是存在GFS当中，如上图所示。更新被提交到一个提交日志，日志中记录了redo记录。在这些更新当中，最近提交的更新被存放到内存当中的一个被称为memtable的排序缓冲区，比较老的更新被存储在一系列SSTable中。为了恢复一个tablet，tablet服务器从METADATA表当中读取这个tablet的元数据。这个元数据包含了SSTable列表，其中，每个SSTable都包括一个tablet和一个重做点（redo
+point）的集合，这些redo
+point是一些指针，它们指向那些可能包含tablet所需数据的重做日志。服务器把SSTable索引读入内存，并且重构memtable，方法是，执行重做点以后的所有已经提交的更新。</p>
+<h3 id="写操作">写操作</h3>
+<p>　　当一个写操作到达tablet服务器，服务器首先检查它是否是良好定义的，并且发送者是否被授权执行该操作。执行授权检查时，会从一个Chubby文件中读取具有访问权限的写入者的列表，这个Chubby文件通常总能够在Chubby客户端缓存中找到。一个有效的变化，会被写到提交日志中。分组提交是为了改进许多小更新操作的吞吐量。在写操作已经被提交以后，它的内容就会被插入到memtable。</p>
+<h3 id="读操作">读操作</h3>
+<p>　　当一个读操作到达Tablet服务器，与写操作类似，服务器也会首先检查它是否是良好定义和得到授权的。一个有效地读操作是在以下二者的合并的基础上执行的，即一系列SSTable和memtable。由于SSTable和memtable是字典排序的数据结构，合并视图的执行是非常高效的。<br>
+　　当tablet发生合并或分解操作时，正在到达的读写操作仍然可以继续进行。</p>
+<h2 id="compactions">Compactions</h2>
+<h3 id="minor-compaction">Minor Compaction</h3>
+<p><img src="/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/5.jpg"></p>
+<p>　　随着写操作的执行，memtable的尺寸逐渐增加。当memtable的尺寸到达一个门槛值的时候，memtable就被冻结，就创建一个新的memtable，<strong>被冻结的memtable就转化成一个SSTable，并被写入到GFS</strong>。这个“次压缩”（minor
+compaction）过程有两个目标：</p>
+<ul>
+<li>它缩减了tablet服务器的内存使用率；</li>
+<li>当发生服务器死亡需要恢复时，它减少了需要从重做日志中读取的数据量。当压缩过程正在进行时，正在到达的读写操作仍然可以继续进行。</li>
+</ul>
+<h3 id="major-compaction">Major Compaction</h3>
+<p><img src="/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/6.jpg"></p>
+<p>　　每一次小压缩都会创建一个新的SSTable，如果这种行为没有限制地持续进行，读操作可能需要从任意数量的SSTable中合并更新。相反，我们会对这种文件的数量进行限制，我们在后台周期性地运行一个合并压缩程序。一个合并压缩程序从一些SSTable和memtable中读取内容，并且写出一个新的SSTable。一旦压缩过程完成，这个输入的SSTable和memtable就可以被删除。<br>
+　　一个合并压缩程序，把所有的SSTable的数据重写到一个SSTable，这个合并压缩被称为“主压缩”（major
+compaction）。非主压缩所产生的SSTable可以包含特殊的删除入口（entry），它把被删除的数据压缩在仍然存活的比较老的SSTable当中。另一方面，一个主压缩过程，产生一个SSTable，它不包含删除信息或被删除的数据。BigTable定期检查它的所有tablet，并执行主压缩操作。这些主压缩过程可以允许BigTable收回被删除数据占用的资源，并且保证被删除数据在一定时间内就可以从系统中消失，这对于一些存储敏感数据的服务来说是非常重要的。</p>
+<h1 id="refinements">Refinements</h1>
+<p>　　我们再来看看BigTable中涉及到一些完善措施的细节，这些完善措施使BigTable获得高性能、可用性和可靠性。</p>
+<h2 id="locatity-groups">Locatity groups</h2>
+<p>　　客户端可以把多个列家族一起分组到一个locality
+group中。我们会为每个tablet中的每个locality
+group大都创建一个单独的SSTable。把那些通常不被一起访问的列家族分割到不同的locality
+group，可以实现更高效的读。例如，在WebTable当中的页元数据（比如语言和校验码），可以被放置到同一个locality
+group当中，网页的内容可以被放置到另一个locality
+group当中。那些想要读取页面元数据的应用，就不需要访问所有的页面内容。<br>
+　　除此以外，一些有用的参数，可以针对每个locality
+group来设定。例如，一个locality
+group可以设置成存放在内存中。常驻内存的locality
+group的SSTable，采用被动加载的方式被加载tablet服务器的内存，即只有应用请求SSTable中的数据，而这些数据又不在内存中时，才把SSTable加载到内存。一旦加载，属于这些locality
+group的列家族，就可以被应用直接访问，而不需要读取磁盘。这个特性对于那些被频繁访问的小量数据来说是非常有用的。</p>
+<h2 id="compression">Compression</h2>
+<p>　　客户端可以决定是否对相应于某个locality
+group的SSTable进行压缩，如果压缩，应该采用什么格式。用户自定义的压缩格式可以被应用到每个SSTable块中（块的尺寸可以采用与locality
+group相关的参数来进行控制）。虽然对每个块进行单独压缩会损失一些空间，但是，我们可以从另一个方面受益，当解压缩时，只需要对小部分数据进行解压，而不需要解压全部数据。许多客户端都使用“<strong>两段自定义压缩模式</strong>”。第一遍使用Bentley
+and
+McIlroy模式，它对一个大窗口内的长公共字符串进行压缩。第二遍使用一个快速的压缩算法，这个压缩算法在一个16KB数据量的窗口内寻找重复数据。两个压缩步骤都非常快，在现代计算机上运行，他们编码的速度是100-200MB/S，解码的速度在400-1000MB/S。<br>
+　　当选择我们的压缩算法时，即使我们<strong>强调速度而不是空间压缩率</strong>，这个两段压缩模式也表现出了惊人的性能。例如，在WebTable中，我们使用这种压缩模式来存储网页内容。在其中一个实验当中，我们在一个压缩后的locality
+group当中存储了大量的文档。为了达到实验的目的，我们只为每个文档存储一个版本，而不是存储我们可以获得的所有版本。这个压缩模式获得了10：1的空间压缩率。这比传统的GZip方法的效果要好得多，GZip针对HTML数据通常只能获得3:1到4:1的空间压缩率。这种性能上的改进，是和WebTable中的行的存储方式紧密相关的，即所有来自同一个站点的网页都存储在相近的位置。这就使得Bentley
+and
+McIlroy算法可以从同一个站点的网页中确定大量相似的内容。许多应用，不只是WebTable，都会很好地选择行名称，从而保证相似的数据可以被存放到同一个簇当中，这样就可以取得很好的压缩率。当我们在BigTable中存储同一个值的多个不同版本时，可以取得更好的压缩率。</p>
+<h2 id="caching-for-read-performance">Caching for read performance</h2>
+<p>　　为了改进读性能，tablet服务器使用两个层次的缓存。<strong>Scan缓存</strong>是一个高层次的缓存，它缓存了“键–值”对，这些“键–值”对是由tablet服务器代码的SSTable接口返回的。Block缓存是比较低层次的缓存，它缓存了从GFS当中读取的SSTable块。Scan缓存对于那些频繁读取相同数据的应用来说是非常有用的。Block缓存对于那些倾向于读取与自己最近读取数据临近的数据的应用来说，是比较有用的，比如顺序读取，或者随机读取属于同一个locality
+group中的不同的列。</p>
+<h2 id="bloom-filters">Bloom filters</h2>
+<p>　　一个读操作必须从构成一个tablet的当前状态的所有SSTable中读取数据。如果这些SSTable不在内存中，我们就不得不需要很多磁盘访问。我们通过下面的方式来减少磁盘访问，即允许客户端来确定，为某个特定locality
+group中的SSTable创建Bloom filter。一个Bloom
+filter允许我们询问，一个SSTabble是否包含属于指定的“行–列队”的特定的数据。对于某个特定的应用，一个用来存储Bloom
+filter的很少量的tablet服务器内存空间，都可以极大减少读操作的磁盘访问次数。我们使用Bloom
+filter也意味着，许多针对目前不存在的行或列的查询，根本就不需要访问磁盘。</p>
+<h2 id="commit-log-implementation">Commit-log implementation</h2>
+<p>　　如果我们为每个tablet都设置一个单独的文件来保存提交日志，那么，在GFS中，会有大量的文件并发写操作。取决于每个GFS服务器底层文件系统的实现方式，这些写操作会引起大量的磁盘访问。除此以外，让每个tablet都有一个单独的日子文件，会降低分组提交优化的效率。为了解决这些问题，我们<strong>对每个tablet服务器具备一个独立日志文件这种方式进行了补充，不是把更新都写入相应tablet的独立文件中，而是把几个不同tablet的更新内容都添加到一个同样的物理日志文件中。</strong><br>
+　　使用单个日志文件，明显改善了普通操作时的性能收益，但是，它使得故障恢复变得复杂起来。当一个tablet服务器死亡，它上面承载的tablet会被重新分配到其他多个tablet服务器，每个tablet服务器通常只接收一部分tablet。为了给一个tablet恢复状态，新的tablet服务器需要根据原来tablet服务器中记载的提交日志文件，为这个tablet重新执行一遍更新操作。但是，针对这些tablet的更新操作的日子记录，都混合存放在一个日志文件中。一种方法是，让新的tablet服务器完整地读取一份提交日志文件，然后，只把恢复这个tablet时所需要的日志记录读取出来，完成恢复。但是，在这种机制下，如果有100个机器，每个都被分配了来自死亡tablet服务器的一个单独的tablet，那么，这个日志文件就必须被重复读取100遍。<br>
+　　我们通过以下的方式来避免日志的重复读写：首先<strong>以键（表，行名称，日志顺序号）的顺序对日志文件的条目（entry）进行排序</strong>。在排序得到的结果中，所有针对某个特定tablet的更新都是连续存放的，因此，可以通过一次磁盘寻找，然后<strong>顺序批量读取数据</strong>，这种方法具有较高的效率。为了实现并行排序，我们把日子文本分割成64MB为单位的分段，在不同的tablet服务器上对每个分段进行并行排序。主服务器会对排序过程进行协调，当一个tablet服务器表示需要从一些提交日志文件中恢复数据时，就需要启动排序过程。<br>
+　　书写提交日志到GFS中去，由于很多原因（比如GFS服务器上包含很多冲突操作，或者网络拥塞），有时会带来性能上的瓶颈。为了使得更新免受GFS延迟的影响，每个tablet服务器实际上有两个日子书写线程，每个线程都书写到它自己的日志中。在运行时，只有一个进程处于工作状态。如果当前活跃的日志书写线程性能比较差，那么，就切换到另一个日志书写线程。在更新日志队列中的更新就会被这个新激活的线程书写。日志条目包含了序号，这就可以帮助恢复过程删除那些由于线程切换而导致的重复的日志记录。</p>
+<h2 id="speeding-up-tablet-recovery">Speeding up tablet recovery</h2>
+<p>　　如果主服务器把一个tablet从一个tablet服务器转移到另一个tablet服务器。这个源tablet服务器就对这个tablet做一个次压缩（minor
+compaction）。通过减少tablet服务器中的提交日志中的未压缩状态的数量，压缩过程减少了恢复时间。在完成这个压缩过程以后，这个源tablet服务器就停止提供针对这个tablet的服务。在它实际上卸载这个tablet之前，这个源tablet服务器要做另一个次压缩，来删除本tablet服务器的日志中任何未压缩的状态，这些未压缩状态是在第一个次压缩进行过程中产生的。当第二个次压缩完成时，这个tablet就可以被加载到另一个tablet服务器，而不需要任何日志条目的恢复。</p>
+<h2 id="exploiting-immutability">Exploiting immutability</h2>
+<p>　　除了SSTable缓存，BigTable系统的其他部分也已经被简化，这些简化基于这样一个事实，即我们所产生的所有SSTable都是不变的。例如，当我们从SSTable中读取数据时，不需要进行任何文件系统访问的同步。结果是，针对行级别的并发控制可以高效地执行。唯一发生变化的数据结构是memtable，它同时被读操作和写操作访问。为了减少读取memtable过程中的冲突，我们使得每个memtable行采取<strong>”copy-on-write”</strong>，并且允许读和写操作并行执行。<br>
+　　<strong>由于SSTable是不可变的，永久性删除数据的问题就转变成，收集废弃的SSTable。</strong>每个tablet的SSTable，都会在METADATA表中进行注册。主服务器移除废弃的SSTable，把它标记为垃圾数据集合。<br>
+　　最后，SSTable的不可变性，允许我们更快地分裂tablet，而不是为每个子tablet生成一个新的SSTable集合。我们让子tablet和父tablet共享一个SSTable集合。</p>
+<h1 id="总结">总结</h1>
+<p>　　本文只是摘抄了Google论文里的一些论文，便于自己理解。总的来说，BigTable的设计还是非常优美的，并且得到许多其他存储系统的借鉴。</p>
+<h1 id="引用">引用</h1>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf">Bigtable:
+a distributed storage system for structured data</a></li>
+<li><a target="_blank" rel="noopener" href="http://dblab.xmu.edu.cn/post/google-bigtable/">Google
+Bigtable (中文版)</a></li>
+</ul>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/">BigTable调研笔记</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页"></a></p>
+        <p><span>发布时间:</span>2018-07-19, 22:56:45</p>
+        <p><span>最后更新:</span>2022-09-28, 08:09:25</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/" title="BigTable调研笔记">http://chengfeng96.com/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://chengfeng96.com/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/　　作者: " title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/blog/2018/07/28/Mysql%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95/">
+                    Mysql中的索引
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/blog/2018/06/19/%E8%AF%BB%E3%80%8A%E6%94%B9%E5%8F%98%E5%BF%83%E7%90%86%E5%AD%A6%E7%9A%8440%E9%A1%B9%E7%A0%94%E7%A9%B6%E3%80%8B--%E5%88%9D%E6%8E%A2%E5%BF%83%E7%90%86%E5%AD%A6/">
+                    读《改变心理学的40项研究》--初探心理学
+                </a>
+            </div>
+        
+    </nav>
+
+  
+  
+    
+    <div style="padding: 0; margin: 20px auto; width: 90%; text-align: center;">
+      <br>
+      <div>坚持原创技术分享，您的支持将鼓励我继续创作，π（3.14）元就够啦！</div>
+      <br>
+      <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+        <div class="btn btn-pay">打赏支持</div>
+      </button>
+      <br>
+      <br>
+      <div id="QR" style="display: none;">
+        
+          <div id="wechat" style="display: inline-block;">
+            <img id="wechat_qr" src="/img/wechat.jpg" alt=" WeChat Pay"/>
+            <p>微信打赏</p>
+          </div>
+        
+        
+          <div id="alipay" style="display: inline-block">
+            <img id="alipay_qr" src="/img/alipay.jpg" alt=" Alipay"/>
+            <p>支付宝打赏</p>
+          </div>
+        
+        <br>
+        <br>
+      </div>
+    </div>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">引言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#data-model"><span class="toc-number">2.</span> <span class="toc-text">Data Model</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#rows"><span class="toc-number">2.1.</span> <span class="toc-text">Rows</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#column-families"><span class="toc-number">2.2.</span> <span class="toc-text">Column Families</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#timestamp"><span class="toc-number">2.3.</span> <span class="toc-text">TimeStamp</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#building-blocks"><span class="toc-number">3.</span> <span class="toc-text">Building Blocks</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#gfs"><span class="toc-number">3.1.</span> <span class="toc-text">GFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sstable"><span class="toc-number">3.2.</span> <span class="toc-text">SSTable</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#chubby"><span class="toc-number">3.3.</span> <span class="toc-text">Chubby</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#implementation"><span class="toc-number">4.</span> <span class="toc-text">Implementation</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#tablet-location"><span class="toc-number">4.1.</span> <span class="toc-text">Tablet Location</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tablet-assignment"><span class="toc-number">4.2.</span> <span class="toc-text">Tablet Assignment</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tablet-serving"><span class="toc-number">4.3.</span> <span class="toc-text">Tablet Serving</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%99%E6%93%8D%E4%BD%9C"><span class="toc-number">4.3.1.</span> <span class="toc-text">写操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%BB%E6%93%8D%E4%BD%9C"><span class="toc-number">4.3.2.</span> <span class="toc-text">读操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#compactions"><span class="toc-number">4.4.</span> <span class="toc-text">Compactions</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#minor-compaction"><span class="toc-number">4.4.1.</span> <span class="toc-text">Minor Compaction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#major-compaction"><span class="toc-number">4.4.2.</span> <span class="toc-text">Major Compaction</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#refinements"><span class="toc-number">5.</span> <span class="toc-text">Refinements</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#locatity-groups"><span class="toc-number">5.1.</span> <span class="toc-text">Locatity groups</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#compression"><span class="toc-number">5.2.</span> <span class="toc-text">Compression</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#caching-for-read-performance"><span class="toc-number">5.3.</span> <span class="toc-text">Caching for read performance</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bloom-filters"><span class="toc-number">5.4.</span> <span class="toc-text">Bloom filters</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#commit-log-implementation"><span class="toc-number">5.5.</span> <span class="toc-text">Commit-log implementation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#speeding-up-tablet-recovery"><span class="toc-number">5.6.</span> <span class="toc-text">Speeding up tablet recovery</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#exploiting-immutability"><span class="toc-number">5.7.</span> <span class="toc-text">Exploiting immutability</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BC%95%E7%94%A8"><span class="toc-number">7.</span> <span class="toc-text">引用</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"BigTable调研笔记　| 零一人生　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+        <section id="comments">
+    <style> aside.comment-bar { margin: auto 30px; }</style>
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function(){
+            this.page.url = 'http://chengfeng96.com/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/';
+            this.page.identifier = 'blog/2018/07/19/BigTable调研笔记/';
+        };
+        var loadComment = function(){
+            var d = document, s = d.createElement('script');
+            s.src = '//HelloHazzaCheng.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        }
+    </script>
+    
+    <script> loadComment(); </script>
+
+</section>
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/blog/2018/07/28/Mysql%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95/" title="上一篇: Mysql中的索引">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/blog/2018/06/19/%E8%AF%BB%E3%80%8A%E6%94%B9%E5%8F%98%E5%BF%83%E7%90%86%E5%AD%A6%E7%9A%8440%E9%A1%B9%E7%A0%94%E7%A9%B6%E3%80%8B--%E5%88%9D%E6%8E%A2%E5%BF%83%E7%90%86%E5%AD%A6/" title="下一篇: 读《改变心理学的40项研究》--初探心理学">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/blog/2021/11/21/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%E5%8D%81%EF%BC%89-PC-DARTS/">NAS 学习笔记（二十）- PC-DARTS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2021/11/17/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%B9%9D%EF%BC%89-ProxylessNAS/">NAS 学习笔记（十九）- ProxylessNAS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2021/04/06/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E5%85%AB%EF%BC%89-DARTS-PT/">NAS 学习笔记（十八）- DARTS+PT</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/12/04/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%B8%83%EF%BC%89-SNAS/">NAS 学习笔记（十七）- SNAS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/11/09/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E5%85%AD%EF%BC%89-NoisyDARTS/">NAS 学习笔记（十六）- NoisyDARTS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/11/06/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%BA%94%EF%BC%89-P-DARTS/">NAS 学习笔记（十五）- P-DARTS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/07/27/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E5%9B%9B%EF%BC%89-GDBT-NAS/">NAS 学习笔记（十四）- GDBT-NAS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/07/24/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%B8%89%EF%BC%89-NASP/">NAS 学习笔记（十三）- NASP</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/07/18/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%BA%8C%EF%BC%89-SemiNAS/">NAS 学习笔记（十二）- SemiNAS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/07/16/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%B8%80%EF%BC%89-GreedyNAS/">NAS 学习笔记（十一）- GreedyNAS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/07/13/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%EF%BC%89-Fair-DARTS/">NAS 学习笔记（十）- Fair DARTS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/07/11/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B9%9D%EF%BC%89-FairNAS/">NAS 学习笔记（九）- FairNAS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/07/09/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%85%AB%EF%BC%89-SPOS/">NAS 学习笔记（八）- SPOS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/06/23/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%83%EF%BC%89-NAO/">NAS 学习笔记（七）- NAO</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/06/16/XGBoost-%E5%92%8C-Lightgbm-%E7%AC%94%E8%AE%B0/">XGBoost 和 Lightgbm 笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/02/28/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%85%AB%EF%BC%89-%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E7%9A%84%E7%A1%AE%E5%AE%9A%E6%80%A7%E7%AD%96%E7%95%A5/">强化学习笔记（八）- 连续空间的确定性策略</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/02/24/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%83%EF%BC%89-%E8%B5%84%E6%A0%BC%E8%BF%B9/">强化学习笔记（七）- 资格迹</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/02/21/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%85%AD%EF%BC%89-%E7%AD%96%E7%95%A5%E6%A2%AF%E5%BA%A6/">强化学习笔记（六）- 策略梯度</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/02/19/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%94%EF%BC%89-%E5%87%BD%E6%95%B0%E8%BF%91%E4%BC%BC%E6%96%B9%E6%B3%95/">强化学习笔记（五）- 函数近似方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/02/16/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89-%E6%97%B6%E5%BA%8F%E5%B7%AE%E5%88%86%E5%AD%A6%E4%B9%A0/">强化学习笔记（四）- 时序差分学习</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/02/15/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89-%E8%92%99%E7%89%B9%E5%8D%A1%E7%BD%97%E6%96%B9%E6%B3%95/">强化学习笔记（三）- 蒙特卡罗方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/02/14/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E6%96%B9%E6%B3%95/">强化学习笔记（二）- 动态规划方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/02/11/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89-Markov-%E5%86%B3%E7%AD%96%E8%BF%87%E7%A8%8B%E6%A8%A1%E5%9E%8B/">强化学习笔记（一）- Markov 决策过程模型</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/12/03/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/">机器学习基础笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/12/02/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%85%AD%EF%BC%89-Evolution-NAS/">NAS 学习笔记（六）- Evolution NAS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/30/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%94%EF%BC%89-DARTS/">NAS 学习笔记（五）- DARTS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/28/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89-One-Shot-Architecture-Search/">NAS 学习笔记（四）- One-Shot Architecture Search</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/27/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89-ENAS/">NAS 学习笔记（三）- ENAS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/26/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89-SMASH/">NAS 学习笔记（二）- SMASH</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/26/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89-NASNet/">NAS 学习笔记（一）- NASNet</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/19/BOHB-%E7%AC%94%E8%AE%B0/">AutoML HPO 学习笔记（五）- BOHB</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/18/Hyeperband-%E7%AC%94%E8%AE%B0/">AutoML HPO 学习笔记（四）- Hyeperband</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/15/SMAC-%E7%AC%94%E8%AE%B0/">AutoML HPO 学习笔记（三）- SMAC</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/13/Hyperopt-%E5%92%8C-TPE-%E7%AC%94%E8%AE%B0/">AutoML HPO 学习笔记（二）- Hyperopt 和 TPE</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/06/Ensemble-Selection-%E7%AC%94%E8%AE%B0/">Ensemble Selection 笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/09/08/%E8%B4%9D%E5%8F%B6%E6%96%AF%E4%BC%98%E5%8C%96%E7%AC%94%E8%AE%B0/">AutoML HPO 学习笔记（一）- 贝叶斯优化</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/07/26/%E8%AF%BB%E3%80%8A%E8%87%AA%E7%A7%81%E7%9A%84%E5%9F%BA%E5%9B%A0%E3%80%8B-%E7%88%B6%E6%AF%8D%E4%B8%BA%E5%95%A5%E6%80%BB%E6%98%AF%E6%97%A0%E7%A7%81%E7%9A%84/">读《自私的基因》--父母为啥总是无私的</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/06/20/%E9%9A%90%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E6%A8%A1%E5%9E%8B%E7%AC%94%E8%AE%B0/">机器学习基础（十三）- 隐马尔可夫模型笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/06/08/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">机器学习基础（十二）- 强化学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/05/26/%E5%8D%8A%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">机器学习基础（十一）- 半监督学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/05/21/%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9%E7%AC%94%E8%AE%B0/">机器学习基础（十）- 特征选择笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/05/19/%E5%A4%9A%E7%BB%B4%E7%BC%A9%E6%94%BEMDS%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95/">机器学习基础（九）- 多维缩放笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/05/17/%E8%81%9A%E7%B1%BB%E7%AC%94%E8%AE%B0/">机器学习基础（八）- 聚类笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/05/13/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">机器学习基础（七）- 集成学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/05/04/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%88%86%E7%B1%BB%E5%99%A8%E7%AC%94%E8%AE%B0/">机器学习基础（十四）- 贝叶斯分类器笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/04/28/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E9%93%BE%E7%AC%94%E8%AE%B0/">马尔可夫链笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/04/25/%E4%BC%AF%E5%8A%AA%E5%88%A9%E8%BF%87%E7%A8%8B%E5%92%8C%E6%B3%8A%E6%9D%BE%E8%BF%87%E7%A8%8B%E7%AC%94%E8%AE%B0/">伯努利过程和泊松过程笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/04/21/%E7%BB%8F%E5%85%B8%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD%E7%AC%94%E8%AE%B0/">经典统计推断笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/04/18/SVM%E7%AC%94%E8%AE%B0/">机器学习基础（六）- SVM 笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/04/11/%E8%AF%BB%E3%80%8A%E8%8F%8A%E4%B8%8E%E5%88%80%E3%80%8B-%E6%9C%89%E7%82%B9%E7%9F%9B%E7%9B%BE%E7%9A%84%E6%97%A5%E6%9C%AC%E4%BA%BA/">读《菊与刀》--有点矛盾的日本人</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/04/10/BP%E7%AE%97%E6%B3%95%E7%9A%84%E6%8E%A8%E5%AF%BC/">机器学习基础（五）- BP 算法推导</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/04/10/%E6%9E%81%E9%99%90%E7%90%86%E8%AE%BA%E7%AC%94%E8%AE%B0/">极限理论笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/04/06/%E5%9F%BA%E4%BA%8E%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%96%B9%E6%B3%95%E7%9A%84%E5%B8%B8%E8%A7%81%E4%BC%B0%E8%AE%A1%E6%96%B9%E6%B3%95/">基于贝叶斯方法的常见估计方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/04/05/%E5%86%B3%E7%AD%96%E6%A0%91%EF%BC%88Decision-Tree%EF%BC%89%E6%B5%85%E8%B0%88/">机器学习基础（四）- 决策树（Decision Tree）笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/03/20/Spark-Shuffle%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/">Spark Shuffle调研笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/03/18/%E8%AF%BB%E3%80%8A%E6%9E%AA%E7%82%AE%E3%80%81%E7%97%85%E8%8F%8C%E4%B8%8E%E9%92%A2%E9%93%81%E3%80%8B-%E9%83%BD%E6%98%AF%E8%80%81%E5%A4%A9%E7%88%B7%E8%B5%8F%E7%9A%84%E9%A5%AD/">读《枪炮、病菌与钢铁》--都是老天爷赏的饭</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/03/17/%E5%B8%B8%E8%A7%81%E8%BF%9E%E7%BB%AD%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F%E7%9A%84%E6%A6%82%E7%8E%87%E5%AF%86%E5%BA%A6%E5%87%BD%E6%95%B0%EF%BC%8C%E5%9D%87%E5%80%BC%E5%92%8C%E6%96%B9%E5%B7%AE/">常见连续随机变量的概率密度函数，均值和方差</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/03/14/%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90%EF%BC%88Principle-Component-Analysis-PCA%EF%BC%89%E6%B5%85%E8%B0%88/">机器学习基础（三）- 主成分分析（Principle Component Analysis, PCA）笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/03/06/%E5%B8%B8%E8%A7%81%E7%A6%BB%E6%95%A3%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F%E7%9A%84%E5%88%86%E5%B8%83%E5%88%97%EF%BC%8C%E5%9D%87%E5%80%BC%E5%92%8C%E6%96%B9%E5%B7%AE/">常见离散随机变量的分布列，均值和方差</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/02/25/%E4%B8%80%E4%BA%9B%E6%9C%89%E8%B6%A3%E7%9A%84%E6%A6%82%E7%8E%87%E9%97%AE%E9%A2%98/">一些有趣的概率问题</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/02/23/%E8%AF%BB%E3%80%8A%E8%8D%92%E8%AF%9E%E5%8C%BB%E5%AD%A6%E5%8F%B2%E3%80%8B--%E5%8C%BB%E5%AD%A6%E7%9A%84%E8%BF%9B%E6%AD%A5/">读《荒诞医学史》--医学的进步</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/02/16/%E8%AF%BB%E3%80%8A%E6%B8%85%E6%95%99%E5%BE%92%E7%9A%84%E7%A4%BC%E7%89%A9%E3%80%8B--%E5%B7%A5%E7%A8%8B%E5%B8%88%E6%96%87%E5%8C%96%E6%98%AF%E6%B8%85%E6%95%99%E5%BE%92%E7%9A%84%E7%B2%BE%E7%A5%9E%E5%90%97/">读《清教徒的礼物》--工程师文化是清教徒的精神吗</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/02/11/%E8%AF%BB%E3%80%8A%E7%A9%B7%E6%9F%A5%E7%90%86%E5%AE%9D%E5%85%B8%E3%80%8B--%E8%B7%A8%E5%AD%A6%E7%A7%91%E7%9A%84%E7%9F%A5%E8%AF%86/">读《穷查理宝典》--跨学科的知识</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/02/04/%E8%AF%BB%E3%80%8A%E5%B9%B3%E9%9D%A2%E5%9B%BD%E3%80%8B--%E5%9B%9B%E7%BB%B4%E4%B8%96%E7%95%8C%E7%9A%84%E2%80%9C%E4%BA%BA%E4%BB%AC%E2%80%9D%E5%A6%82%E4%BD%95%E7%9C%8B%E5%BE%85%E6%88%91%E4%BB%AC%E5%91%A2/">读《平面国》--四维世界的“人们”如何看待我们呢</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/02/02/%E5%AF%B9%E4%BA%8E%E6%A2%AF%E5%BA%A6%E7%9A%84%E7%90%86%E8%A7%A3/">对于梯度的理解</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/02/01/%E8%AF%BB%E3%80%8A5%E5%88%86%E9%92%9F%E5%95%86%E5%AD%A6%E9%99%A2%E2%80%A2%E5%95%86%E4%B8%9A%E7%AF%87%E3%80%8B--%E5%AD%A6%E7%82%B9%E5%95%86%E4%B8%9A%E5%A5%97%E8%B7%AF/">读《5分钟商学院•商业篇》--学点商业套路</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/31/Yarn%E5%9F%BA%E6%9C%AC%E6%9E%B6%E6%9E%84/">Yarn 基本架构</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/31/%E8%AF%BB%E3%80%8A%E4%BA%BA%E7%B1%BB%E7%AE%80%E5%8F%B2%E3%80%8B--%E6%99%BA%E4%BA%BA%E7%9A%84%E8%99%9A%E6%9E%84%E7%8E%B0%E5%AE%9E/">读《人类简史》--智人的虚构现实</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/30/%E4%B8%80%E4%BA%9BHadoop%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98%E7%9A%84%E6%96%B9%E6%B3%95/">一些 Hadoop 性能调优的方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/30/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E4%B9%8B%E5%A5%87%E5%BC%82%E5%80%BC%E5%88%86%E8%A7%A3%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8/">线性代数之奇异值分解及其应用</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/29/Hadoop-MapReduce%E4%B8%ADTask%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/">Hadoop MapReduce中Task的执行流程</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/27/Hadoop%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%8E%A8%E6%B5%8B%E6%89%A7%E8%A1%8C%E7%AE%97%E6%B3%95/">Hadoop的任务推测执行算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/25/%E4%B8%BASpark-SQL%E6%B7%BB%E5%8A%A0%E5%8E%9F%E7%94%9F%E8%87%AA%E5%AE%9A%E4%B9%89%E8%AF%AD%E6%B3%95/">为Spark SQL添加原生自定义语法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/19/Hadoop%20MRv1%E5%9F%BA%E6%9C%AC%E6%9E%B6%E6%9E%84/">Hadoop MRv1基本架构</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/18/%E8%AF%BB%E3%80%8A%E6%97%A0%E6%95%8C%E8%88%B0%E9%98%9F%E3%80%8B--%E7%9B%B8%E4%BF%A1%E2%80%9C%E5%A5%87%E8%BF%B9%E2%80%9D%E7%9A%84%E2%80%9C%E6%97%A0%E6%95%8C%E2%80%9D%E8%88%B0%E9%98%9F/">读《无敌舰队》--相信“奇迹”的“无敌”舰队</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/17/%E8%AF%BB%E3%80%8A%E8%96%9B%E5%85%86%E4%B8%B0%E7%BB%8F%E6%B5%8E%E5%AD%A6%E8%AE%B2%E4%B9%89%E3%80%8B--%E4%BA%BA%E4%BA%BA%E9%83%BD%E5%BA%94%E8%AF%A5%E5%AD%A6%E7%82%B9%E7%BB%8F%E6%B5%8E%E5%AD%A6/">读《薛兆丰经济学讲义》--人人都应该学点经济学</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/05/%E8%AF%BB%E3%80%8A%E5%BE%AE%E8%A7%82%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%AE%8F%E8%A7%82%E8%A1%8C%E4%B8%BA%E3%80%8B--%E4%BA%BA%E4%BB%A5%E7%BE%A4%E5%88%86%EF%BC%8C%E4%BA%92%E7%9B%B8%E4%BE%9D%E8%B5%96/">读《微观动机与宏观行为》--人以群分，互相依赖</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/12/29/%E8%AF%BB%E3%80%8A%E5%A6%82%E4%BD%95%E6%89%8D%E8%83%BD%E4%B8%8D%E7%84%A6%E8%99%91%E3%80%8B--%E4%B8%93%E6%B3%A8%E6%88%98%E8%83%9C%E7%84%A6%E8%99%91/">读《如何才能不焦虑》--专注战胜焦虑</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/12/22/%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%88%86%E6%9E%90%EF%BC%88Linear-Discriminant-Analysis%EF%BC%89%E6%B5%85%E8%B0%88/">机器学习基础（二）- 线性判别分析（Linear Discriminant Analysis）笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/12/21/%E8%AF%BB%E3%80%8A%E4%BA%B2%E5%AF%86%E5%85%B3%E7%B3%BB%E3%80%8B--%E4%BA%B2%E5%AF%86%E5%85%B3%E7%B3%BB%E7%9A%84%E5%A5%97%E8%B7%AF/">读《亲密关系》--亲密关系的套路</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/12/15/%E5%AF%B9%E6%95%B0%E5%87%A0%E7%8E%87%E5%9B%9E%E5%BD%92%EF%BC%88Logistic-Regression%EF%BC%89%E6%B5%85%E8%B0%88/">机器学习基础（一）- 对数几率回归（Logistic Regression）笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/12/07/%E8%AF%BB%E3%80%8A%E5%8D%8E%E6%9D%89%E8%AE%B2%E9%80%8F%E5%AD%99%E5%AD%90%E5%85%B5%E6%B3%95%E3%80%8B--%E4%BB%A5%E5%A5%87%EF%BC%88ji%EF%BC%89%E8%83%9C/">读《华杉讲透孙子兵法》--以奇(ji)胜</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/30/Hadoop%E5%92%8CSpark%E6%A0%B9%E6%8D%AElog4j%E8%87%AA%E5%AE%9A%E4%B9%89%E6%97%A5%E5%BF%97%E8%BE%93%E5%87%BA/">Hadoop和Spark根据log4j自定义日志输出</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/27/%E8%AF%BB%E3%80%8A%E6%B0%B8%E6%81%92%E7%9A%84%E8%BE%B9%E7%BC%98%E3%80%8B--%E5%B8%9D%E7%8E%8B%E6%81%AF%E4%BA%89/">读《永恒的边缘》--帝王息争</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/25/HDFS%E9%87%8C%E7%9A%84Hedged-Read%E6%BA%90%E7%A0%81%E4%BB%A5%E5%8F%8A%E5%B1%80%E9%99%90%E6%80%A7%E5%88%86%E6%9E%90/">HDFS里的Hedged Read源码以及局限性分析</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/22/HDFS%E9%87%8Cread-operation%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90%E4%BB%A5%E5%8F%8A%E8%AF%BB%E6%85%A2%E8%8A%82%E7%82%B9%E9%97%AE%E9%A2%98%E6%8E%A2%E7%A9%B6/">HDFS里read operation源码解析以及读慢节点问题探究</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/16/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BJava%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/">Java 并发编程（十四）- 内存模型</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/15/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%9D%9E%E9%98%BB%E5%A1%9E%E5%90%8C%E6%AD%A5%E6%9C%BA%E5%88%B6/">Java 并发编程（十三）- 非阻塞同步机制</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/13/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BAQS/">Java 并发编程（十二）- AQS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/12/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E6%98%BE%E7%A4%BA%E9%94%81/">Java 并发编程（十一）- 显示锁</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/09/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E6%80%A7%E8%83%BD%E4%B8%8E%E5%8F%AF%E4%BC%B8%E7%BC%A9%E6%80%A7/">Java 并发编程（五）- 构建高效且可伸缩的结果缓存</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%BF%E5%85%8D%E6%B4%BB%E8%B7%83%E6%80%A7%E7%9A%84%E5%8D%B1%E9%99%A9/">Java 并发编程（九）- 避免活跃性的危险</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/06/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E4%BD%BF%E7%94%A8/">Java 并发编程（八）- 线程池的使用</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/04/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%8F%96%E6%B6%88%E4%B8%8E%E5%85%B3%E9%97%AD/">Java 并发编程（七）- 取消与关闭</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/01/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutor/">Java 并发编程（六）- Executor</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/24/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%A4%BA%E4%BE%8B%E4%B9%8B%E6%9E%84%E5%BB%BA%E9%AB%98%E6%95%88%E4%B8%94%E5%8F%AF%E4%BC%B8%E7%BC%A9%E7%9A%84%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98/">Java 并发编程（五）- 构建高效且可伸缩的结果缓存</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/24/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%9F%BA%E7%A1%80%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%9D%97/">Java 并发编程（四）- 基础构建模块</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/22/Spark%E9%87%8CHistroy-Server%E4%B8%A2task%EF%BC%8Cjob%E5%92%8CStage%E9%97%AE%E9%A2%98%E8%B0%83%E7%A0%94/">Spark里Histroy Server丢task，job和Stage问题调研</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/22/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%8F%91%E5%B8%83-%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F/">设计模式之观察者模式和发布-订阅模式</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/21/%E8%AF%BB%E3%80%8A%E6%BC%AB%E6%AD%A5%E5%8D%8E%E5%B0%94%E8%A1%97%E3%80%8B--%E5%9C%A8%E9%9A%8F%E6%9C%BA%E4%B8%AD%E6%BC%AB%E6%AD%A5%EF%BC%8C%E5%9C%A8%E9%9A%8F%E6%9C%BA%E4%B8%AD%E7%A8%B3%E5%AE%9A/">读《漫步华尔街》--在随机中漫步，在随机中稳定</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/21/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%BB%84%E5%90%88/">Java 并发编程（三）- 对象的组合</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/18/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%85%B1%E4%BA%AB/">Java 并发编程（二）- 对象的共享</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/15/%E6%B5%85%E8%B0%88%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/">Java 并发编程（一）- 浅谈线程安全</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/14/Spark%E9%87%8C%E6%9C%89%E5%85%B3History-Server%E7%9A%84scheduler-delay%E7%9B%B8%E5%85%B3%E6%BA%90%E7%A0%81%E7%9A%84%E4%B8%80%E6%AC%A1%E8%B0%83%E7%A0%94/">Spark里有关History Server的scheduler delay相关源码的一次调研</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/11/JVM%E4%B8%AD%E7%9A%84%E5%88%86%E6%B4%BE%E6%9C%BA%E5%88%B6/">JVM 学习（十）- 分派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/10/JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/">JVM 学习（九）- 类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/09/26/%E8%AF%BB%E3%80%8A%E4%B8%96%E7%95%8C%E7%9A%84%E5%87%9B%E5%86%AC%E3%80%8B--%E5%B9%B3%E6%B0%91%E7%9A%84%E6%88%98%E4%BA%89/">读《世界的凛冬》--平民的战争</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/08/05/%E8%B7%B3%E8%A1%A8%E7%AE%80%E6%98%93%E5%AE%9E%E7%8E%B0/">跳表简易实现</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/08/05/%E8%AF%BB%E3%80%8A%E5%B7%A8%E4%BA%BA%E7%9A%84%E9%99%A8%E8%90%BD%E3%80%8B--%E5%B9%B3%E6%B0%91%E7%9A%84%E5%B4%9B%E8%B5%B7/">读《巨人的陨落》--平民的崛起</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/08/04/LSM%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/">LSM调研</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/07/29/B%E6%A0%91%E5%92%8CB-%E6%A0%91/">B树和B+树</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/07/28/Mysql%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95/">Mysql中的索引</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/">BigTable调研笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/06/19/%E8%AF%BB%E3%80%8A%E6%94%B9%E5%8F%98%E5%BF%83%E7%90%86%E5%AD%A6%E7%9A%8440%E9%A1%B9%E7%A0%94%E7%A9%B6%E3%80%8B--%E5%88%9D%E6%8E%A2%E5%BF%83%E7%90%86%E5%AD%A6/">读《改变心理学的40项研究》--初探心理学</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/06/13/%E6%9C%80%E5%A4%A7%E4%BA%8C%E5%88%86%E5%9B%BE%E5%8C%B9%E9%85%8D/">最大二分图匹配</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/06/12/%E8%8E%8E%E5%A3%AB%E6%AF%94%E4%BA%9A%E5%9B%BE%E4%B8%8E%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93/">莎士比亚图与图数据库</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/06/12/%E6%9C%80%E5%B0%8F%E8%B4%B9%E7%94%A8%E6%9C%80%E5%A4%A7%E6%B5%81%E9%97%AE%E9%A2%98/">最小费用最大流问题</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/06/10/%E5%A2%9E%E5%B9%BF%E8%B7%AF%E5%AE%9A%E7%90%86%E5%92%8CEdmonds-Karp%E7%AE%97%E6%B3%95/">增广路定理和Edmonds-Karp算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/27/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">GO 学习笔记（九）- 单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/26/%E5%88%A9%E7%94%A8BFS%EF%BC%8CDFS%EF%BC%8CA-%E8%A7%A3%E5%86%B3%E5%85%AB%E6%95%B0%E7%A0%81%E9%9A%BE%E9%A2%98/">利用BFS，DFS，A*算法解决八数码难题</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/24/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%8F%8D%E5%B0%84/">GO 学习笔记（八）- 反射</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/17/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%B9%B6%E5%8F%91/">GO 学习笔记（七）- 并发</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/14/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8E%A5%E5%8F%A3/">GO 学习笔记（六）- 接口</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/13/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%96%B9%E6%B3%95/">GO 学习笔记（五）- 方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/11/Linux%E4%B8%8B%E9%81%BF%E5%85%8Drm%E8%AF%AF%E5%88%A0/">Linux下避免rm误删</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/06/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%95%B0%E6%8D%AE/">GO 学习笔记（四）- 数据</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/04/%E5%88%86%E5%B8%83%E5%BC%8F%E8%87%AA%E5%A2%9EID%E7%AE%97%E6%B3%95SnowFlake/">分布式自增ID算法SnowFlake</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/04/JVM%E8%B0%83%E4%BC%98%E6%A1%88%E4%BE%8B/">JVM 学习（八）- 调优案例</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/11/JVM%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E4%B8%8E%E6%95%85%E9%9A%9C%E5%A4%84%E7%90%86%E5%B7%A5%E5%85%B7/">JVM 学习（七）- 性能监控与故障处理工具</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/09/%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7%E5%B0%8F%E7%BB%93/">位运算技巧小结</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/08/JVM%E4%B8%AD%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E4%B8%8E%E5%9B%9E%E6%94%B6%E7%AD%96%E7%95%A5/">JVM 学习（六）- 内存分配与回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/08/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%87%BD%E6%95%B0/">GO 学习笔记（三）- 函数</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/08/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E4%B9%8B%E8%A1%A8%E8%BE%BE%E5%BC%8F/">GO 学习笔记（二）- 表达式</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/08/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%8F%98%E9%87%8F/">GO 学习笔记（一）- 变量</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/07/JVM%E4%B8%AD%E7%9A%84%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/">JVM 学习（五）- 垃圾收集器</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/06/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/">设计模式之策略模式</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/05/JVM%E4%B8%AD%E7%9A%84GC%E7%AE%97%E6%B3%95/">JVM 学习（四）- GC 算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/05/JVM%E4%B8%AD%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%AD%98%E6%B4%BB%E5%88%A4%E6%96%AD/">JVM 学习（三）- 对象的存活判断</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/04/JVM%E4%B8%AD%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%AE%BF%E9%97%AE%E5%AE%9A%E4%BD%8D/">JVM 学习（二）- 对象的访问定位</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/03/JVM%E4%B8%AD%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80/">JVM 学习（一）- 对象的内存布局</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/03/24/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E4%B8%8B%E7%9A%84%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/">分布式系统下的共识算法调研笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/03/18/%E5%8C%BA%E5%9D%97%E9%93%BE%E7%AE%80%E5%8D%95%E5%8E%9F%E7%90%86%E5%8F%8APython%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84%E5%8C%BA%E5%9D%97%E9%93%BE/">区块链简单原理及Python实现简单的区块链</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/03/15/Scala%E9%87%8C%E7%9A%84%E5%9E%8B%E5%8F%98/">Scala学习笔记（十一）- Scala里的型变(Variance)</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/03/15/%E2%80%9C%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%EF%BC%8C%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F%EF%BC%8C%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%E2%80%9D/">策略模式之简单工厂模式，工厂方法模式，抽象工厂模式</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/25/%E5%B8%B8%E8%A7%81%E7%9A%84%E6%8E%92%E5%BA%8F%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0/">常见的排序算法实现</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/22/Johnson%E7%AE%97%E6%B3%95/">Johnson算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/20/Floyd-Warshall%E7%AE%97%E6%B3%95/">Floyd-Warshall算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/17/%E6%9C%80%E7%9F%AD%E8%B7%AF%E5%BE%84%E5%92%8C%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95/">最短路径和矩阵乘法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/14/SPFA%E7%AE%97%E6%B3%95/">SPFA算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/13/Dijkstra%E7%AE%97%E6%B3%95/">Dijkstra算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/12/Bellman-Ford%E7%AE%97%E6%B3%95/">Bellman-Ford算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/10/Prim%E7%AE%97%E6%B3%95/">Prim算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/10/Kruskal%E7%AE%97%E6%B3%95/">Kruskal算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/09/%E6%B5%85%E8%B0%88%E7%9F%A9%E9%98%B5%E5%BF%AB%E9%80%9F%E5%B9%82/">浅谈矩阵快速幂</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/01/20/Java%E4%B8%AD%E7%94%A8Deque%E6%8E%A5%E5%8F%A3%E4%BB%A3%E6%9B%BFStack%E6%8E%A5%E5%8F%A3%E5%AE%8C%E6%88%90%E6%A0%88%E5%8A%9F%E8%83%BD/">Java中用Deque接口代替Stack接口完成栈功能</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/01/19/Docker%E4%B8%AD%E7%9A%84%E9%95%9C%E5%83%8F/">Docker 学习笔记（三）- Docker中的镜像</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/12/24/%E8%AF%BB%E3%80%8A%E6%9E%81%E7%AE%80%E5%AE%87%E5%AE%99%E5%8F%B2%E3%80%8B--%E6%B8%BA%E5%B0%8F%E7%9A%84%E6%88%91%E4%BB%AC%EF%BC%8C%E6%97%A0%E9%99%90%E7%9A%84%E6%80%9D%E7%BB%B4/">读《极简宇宙史》--渺小的我们，无限的思维</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/11/30/Docker%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/">Docker 学习笔记（二）- Docker基础命令</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/11/28/%E6%9C%80%E5%A4%A7%E5%AD%90%E6%95%B0%E7%BB%84%E9%97%AE%E9%A2%98-The-maximum-subarray-problem/">最大子数组问题(The maximum-subarray problem)</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/11/23/Docker%E5%88%9D%E4%BD%93%E9%AA%8C/">Docker 学习笔记（一）- Docker初体验</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/11/12/%E5%88%A9%E7%94%A8Morris-Traversal%E6%96%B9%E6%B3%95%E9%81%8D%E5%8E%86%E4%BA%8C%E5%8F%89%E6%A0%91/">利用Morris Traversal方法遍历二叉树</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/09/11/%E5%88%A9%E7%94%A8%E7%BA%BF%E6%AE%B5%E6%A0%91%E8%A7%A3%E5%86%B3%E5%8C%BA%E9%97%B4%E6%9C%80%E5%80%BC%E6%9F%A5%E8%AF%A2-RMQ-%E9%97%AE%E9%A2%98/">利用线段树和ST算法解决区间最值查询(RMQ)问题</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/09/09/%E7%BA%BF%E6%AE%B5%E6%A0%91%E5%B0%8F%E8%AE%B0/">线段树小记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/08/15/%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95%E4%B8%8E%E8%B5%AB%E5%A4%AB%E6%9B%BC%E7%BC%96%E7%A0%81-Huffman-Code/">贪心算法与赫夫曼编码(Huffman Code)</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/08/14/Java%E9%87%8C%E7%9A%84%E5%BA%8F%E5%88%97%E5%8C%96%E5%8F%8A%E5%BA%8F%E5%88%97%E5%8C%96%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/">Java里的序列化及序列化代理模式</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/08/14/Scala%E9%87%8C%E7%9A%84%E9%9A%90%E5%BC%8F%E7%B1%BB%E5%9E%8B%E7%BA%A6%E6%9D%9F-Implicit-Type-Bounds/">Scala学习笔记（十）- Scala里的隐式类型约束(Implicit Type Bounds)</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/08/11/%E5%88%A9%E7%94%A8%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95%E8%A7%A3%E5%86%B3%E6%B4%BB%E5%8A%A8%E9%80%89%E6%8B%A9%E9%97%AE%E9%A2%98/">利用贪心算法解决活动选择问题</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/08/09/%E5%88%A9%E7%94%A8%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E6%9E%84%E9%80%A0%E9%9C%8D%E5%A4%AB%E6%9B%BC%E6%A0%91-Huffman-Tree/">利用动态规划构造霍夫曼树(Huffman Tree)</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/08/05/Scala%E9%87%8C%E7%9A%84%E5%AD%98%E5%9C%A8%E7%B1%BB%E5%9E%8B/">Scala学习笔记（九）- Scala里的存在类型</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/08/04/%E5%88%A9%E7%94%A8%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E8%A7%A3%E5%86%B3%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97-LCS-%E9%97%AE%E9%A2%98/">利用动态规划解决最长公共子序列(LCS)问题</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/08/02/Scala%E4%B8%AD%E7%9A%84%E7%BB%93%E6%9E%84%E5%8C%96%E7%B1%BB%E5%9E%8B/">Scala学习笔记（八）- Scala中的结构化类型(Structural Type)</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/07/29/%E6%B5%85%E8%B0%88Java%E4%B8%AD%E7%9A%84%E6%9E%9A%E4%B8%BE%E7%B1%BB%E5%9E%8B/">浅谈Java中的枚举类型</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/07/27/Scala%E4%B8%AD%E7%9A%84%E8%B7%AF%E5%BE%84%E4%BE%9D%E8%B5%96%E7%B1%BB%E5%9E%8B%E5%92%8C%E7%B1%BB%E5%9E%8B%E6%B3%A8%E5%85%A5/">Scala学习笔记（七）- Scala中的路径依赖类型(Path-dependent Type)和类型注入(Type Projection)</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/07/27/%E5%88%A9%E7%94%A8%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E8%A7%A3%E5%86%B3%E7%9F%A9%E9%98%B5%E9%93%BE%E4%B9%98%E6%B3%95%E9%97%AE%E9%A2%98/">利用动态规划解决矩阵链乘法问题</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/07/26/Scala%E4%B8%AD%E7%9A%84%E9%9A%90%E5%BC%8F%E8%BD%AC%E6%8D%A2%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%A0%94/">Scala学习笔记（六）- Scala中的隐式转换系统</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/07/22/%E5%88%A9%E7%94%A8%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E8%A7%A3%E5%86%B3%E9%92%A2%E6%9D%A1%E5%88%87%E5%89%B2%E9%97%AE%E9%A2%98/">利用动态规划解决钢条切割问题</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/07/09/Scala%E4%B8%AD%E7%9A%84%EF%BC%82%E8%87%B4%E5%91%BD%E9%92%BB%E7%9F%B3%E9%97%AE%E9%A2%98%EF%BC%82/">Scala学习笔记（五）- Scala中的＂致命钻石问题＂</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/07/08/Scala%E4%B8%AD%E5%91%BD%E5%90%8D%E5%8F%82%E6%95%B0%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E5%9D%91%EF%BC%88%E6%88%AA%E8%87%B3Scala2-12-2%EF%BC%89/">Scala学习笔记（四）- Scala中命名参数的一个小坑（截至Scala2.12.2）</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/07/07/%E5%B0%BE%E9%80%92%E5%BD%92%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/">尾递归调研笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/07/03/Java%E4%B8%AD%E6%B6%88%E9%99%A4%E8%BF%87%E6%9C%9F%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%BC%95%E7%94%A8/">Java中消除过期的对象引用</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/06/25/%E5%9C%A8vim%E4%B8%AD%E4%BF%9D%E5%AD%98%E6%AD%A3%E5%9C%A8%E7%BC%96%E8%BE%91%E7%9A%84%E6%96%87%E4%BB%B6%E8%80%8C%E4%B8%8D%E9%9C%80%E8%A6%81%E5%BF%85%E8%A6%81%E7%9A%84%E6%9D%83%E9%99%90/">在vim中保存正在编辑的文件而不需要必要的权限</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/06/19/Java%E4%B8%AD%E6%9E%84%E9%80%A0%E5%99%A8%E5%92%8C%E5%8D%95%E4%BE%8B%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9B%E5%BB%BA/">Java中构造器和单例对象的创建</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/06/18/Java%E4%B8%AD%E9%81%BF%E5%85%8D%E5%88%9B%E5%BB%BA%E4%B8%8D%E5%BF%85%E8%A6%81%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%96%B9%E6%B3%95/">Java中避免创建不必要对象的方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/06/08/Scala%E4%B8%AD%E5%AF%B9%E8%B1%A1%E7%9B%B8%E7%AD%89%E6%80%A7%E5%B0%8F%E8%AE%B0/">Scala学习笔记（三）- Scala中对象相等性</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/05/24/Scala%E7%9A%84%E4%BC%A0%E5%80%BC%E5%92%8C%E4%BC%A0%E5%90%8D%E5%87%BD%E6%95%B0%E5%B0%8F%E8%AE%B0/">Scala学习笔记（二）- Scala的传值和传名函数</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/04/25/%E9%80%9A%E7%94%A8%E5%90%8E%E7%BC%80%E6%A0%91%E5%B9%B6%E8%A1%8C%E5%8C%96%E6%9E%84%E5%BB%BA%E7%AE%97%E6%B3%95%E6%80%9D%E8%B7%AF/">通用后缀树并行化构建算法思路</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/04/04/yum%E5%AE%89%E8%A3%85CDH-Hadoop-HA%E6%A8%A1%E5%BC%8F/">yum 安装 CDH Hadoop (HA模式)</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/01/03/Scala%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AF%AD%E6%B3%95%E7%B3%96%E5%92%8C%E7%89%B9%E6%80%A7/">Scala学习笔记（一）- Scala的一些语法糖和特性</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2016/11/22/KMP%E7%AE%97%E6%B3%95%E5%B0%8F%E7%BB%93/">KMP算法小结</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2016/07/30/Cpp%E4%B8%ADchar-%EF%BC%8Cconst-char-%EF%BC%8Cstring%E7%9A%84%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2/">C++ 中char*，const char*，string的相互转换</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2017-2022 Hazza Cheng
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_uv">
+                      您是第 <span id="busuanzi_value_site_uv"></span> 位小伙伴
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+                    </span>
+                
+                <span>| </span>
+                <span class="post-count">  已经写了 610.5k 字啦</span>
+            </div>
+        
+        </br>
+        <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+        <script>
+            var now = new Date(); 
+            function createtime(){ var grt= new Date("04/02/2017 11:02:49");//此处修改你的建站时间或者网站上线时间 
+            now.setTime(now.getTime()+250); 
+            days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+            hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+            if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+            mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+            seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+            snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+            document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 "; 
+            document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; } 
+            setInterval("createtime()",250);
+        </script>
+    </div>
+</footer>
+
+    </div>
+    
+    
+<script src="/js/GithubRepoWidget.js"></script>
+
+
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script src="//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        $("a[target=_blank]").removeAttr("target");
+    
+</script>
+
+    <script>
+        var originTitle = document.title;
+        var titleTime;
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                document.title = "(つェ⊂) 我藏好了哦~ " + originTitle;
+                clearTimeout(titleTime);
+            }
+            else {
+                document.title = "(*´∇｀*) 被你发现啦~ " + originTitle;
+                titleTime = setTimeout(function() {
+                    document.title = originTitle;
+                }, 2000);
+            }
+        })
+    </script>
+
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  </div>
+</body>
+</html>

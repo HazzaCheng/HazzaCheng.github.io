@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Hazza Cheng" />
+
+
+
+<meta name="description" content="版权声明：本文原创，转载请留意文尾，如有侵权请留言，谢谢 引言 　　这篇文章中我们主要来探讨下Docker镜像，它是用来启动容器的构建基石，本文的所用到的Dcoker版本是17.1，API版本是1.33，Go的版本是1.9.2，OS是基于Arch Linux的Manjaro。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker 学习笔记（三）- Docker中的镜像">
+<meta property="og:url" content="http://chengfeng96.com/blog/2018/01/19/Docker%E4%B8%AD%E7%9A%84%E9%95%9C%E5%83%8F/index.html">
+<meta property="og:site_name" content="零一人生">
+<meta property="og:description" content="版权声明：本文原创，转载请留意文尾，如有侵权请留言，谢谢 引言 　　这篇文章中我们主要来探讨下Docker镜像，它是用来启动容器的构建基石，本文的所用到的Dcoker版本是17.1，API版本是1.33，Go的版本是1.9.2，OS是基于Arch Linux的Manjaro。">
+<meta property="og:locale">
+<meta property="og:image" content="http://chengfeng96.com/blog/2018/01/19/Docker%E4%B8%AD%E7%9A%84%E9%95%9C%E5%83%8F/docker-filesystems-multilayer.png">
+<meta property="article:published_time" content="2018-01-19T11:30:17.000Z">
+<meta property="article:modified_time" content="2021-03-02T06:07:29.000Z">
+<meta property="article:author" content="Hazza Cheng">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="images">
+<meta property="article:tag" content="Dockerfile">
+<meta property="article:tag" content="虚拟化">
+<meta property="article:tag" content="cloud computing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://chengfeng96.com/blog/2018/01/19/Docker%E4%B8%AD%E7%9A%84%E9%95%9C%E5%83%8F/docker-filesystems-multilayer.png">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="零一人生" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>Docker 学习笔记（三）- Docker中的镜像 | 零一人生</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/"></a></h1>
+        </hgroup>
+
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false" />
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0">读书笔记</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:hazzacheng@gmail.com" title="Email"></a>
+                            
+                                <a class="fa RSS" href="/atom.xml" title="RSS"></a>
+                            
+                                <a class="fa Github" target="_blank" rel="noopener" href="https://github.com/HazzaCheng" title="Github"></a>
+                            
+                                <a class="fa 知乎" target="_blank" rel="noopener" href="https://www.zhihu.com/people/hazzacheng" title="知乎"></a>
+                            
+                                <a class="fa 豆瓣" target="_blank" rel="noopener" href="https://www.douban.com/people/HazzaCheng/" title="豆瓣"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/A/" rel="tag">A*</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AGNES/" rel="tag">AGNES</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AQS/" rel="tag">AQS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AUC/" rel="tag">AUC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Abstract-Factory-Pattern/" rel="tag">Abstract Factory Pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Accumulating-Trace/" rel="tag">Accumulating Trace</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Accuracy/" rel="tag">Accuracy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Acquisition-function/" rel="tag">Acquisition function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Action-Preference-Function/" rel="tag">Action Preference Function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Active-Learning/" rel="tag">Active Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Actor%E2%80%93Critic/" rel="tag">Actor–Critic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AdaBoost/" rel="tag">AdaBoost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Adjoint/" rel="tag">Adjoint</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Advantage-Function/" rel="tag">Advantage Function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Amdahl/" rel="tag">Amdahl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Append-only-Tree/" rel="tag">Append-only Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ArrayDeque/" rel="tag">ArrayDeque</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Atomic/" rel="tag">Atomic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AutoML/" rel="tag">AutoML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/B-Tree/" rel="tag">B+ Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/B-Tree/" rel="tag">B-Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BFS/" rel="tag">BFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BFT/" rel="tag">BFT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BGD/" rel="tag">BGD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BO/" rel="tag">BO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BOHB/" rel="tag">BOHB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BP/" rel="tag">BP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BST/" rel="tag">BST</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bagging/" rel="tag">Bagging</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bandit-learning/" rel="tag">Bandit learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Barrier/" rel="tag">Barrier</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Baum-Welch/" rel="tag">Baum-Welch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bayes-Classifiers/" rel="tag">Bayes Classifiers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bayes-Rule/" rel="tag">Bayes Rule</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bayesian-Estimation/" rel="tag">Bayesian Estimation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bayesian-Linear-Regression/" rel="tag">Bayesian Linear Regression</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bayesian-Network/" rel="tag">Bayesian Network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bayesian-Statistical-Inference/" rel="tag">Bayesian Statistical Inference</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bellman-Expectation-Equation/" rel="tag">Bellman Expectation Equation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bellman-Optimal-Equation/" rel="tag">Bellman Optimal Equation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bellman-Ford/" rel="tag">Bellman-Ford</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bernoulli-Distribution/" rel="tag">Bernoulli Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bernoulli-Process/" rel="tag">Bernoulli Process</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bias-Variance-Decomposition/" rel="tag">Bias-Variance Decomposition</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bias-Variance-Dilemma/" rel="tag">Bias-Variance Dilemma</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Big-Data/" rel="tag">Big Data</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BigTable/" rel="tag">BigTable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Binomial-Distribution/" rel="tag">Binomial Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BlockingQueue/" rel="tag">BlockingQueue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Boosting/" rel="tag">Boosting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Boosting-Tree/" rel="tag">Boosting Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-K-Equation/" rel="tag">C-K Equation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C4-5/" rel="tag">C4.5</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CAP/" rel="tag">CAP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CART/" rel="tag">CART</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CAS/" rel="tag">CAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CASH/" rel="tag">CASH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDF/" rel="tag">CDF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Calculus/" rel="tag">Calculus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Callable/" rel="tag">Callable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Central-Limit-Theorem/" rel="tag">Central Limit Theorem</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Chebyshev-s-Inequality/" rel="tag">Chebyshev&#39;s Inequality</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Chi-Squared-Test/" rel="tag">Chi-Squared Test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Chi-squared-distribution/" rel="tag">Chi-squared distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Chubby/" rel="tag">Chubby</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ClassTag/" rel="tag">ClassTag</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Classical-Statistical-Inference/" rel="tag">Classical Statistical Inference</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Clustering/" rel="tag">Clustering</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Co-training/" rel="tag">Co-training</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CompletionService/" rel="tag">CompletionService</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ConcurrentHashMap/" rel="tag">ConcurrentHashMap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ConcurrentLinkedQueue/" rel="tag">ConcurrentLinkedQueue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ConcurrentModificationException/" rel="tag">ConcurrentModificationException</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Condition-Queue/" rel="tag">Condition Queue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Constrained-Seed-k-means/" rel="tag">Constrained Seed k-means</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Constrained-k-means/" rel="tag">Constrained k-means</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Context-Switching/" rel="tag">Context Switching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CopyOnWriteArrayList/" rel="tag">CopyOnWriteArrayList</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CountDownLatch/" rel="tag">CountDownLatch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Counting/" rel="tag">Counting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DARTS/" rel="tag">DARTS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DARTS-PT/" rel="tag">DARTS+PT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DBSCAN/" rel="tag">DBSCAN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DCL/" rel="tag">DCL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DDPG/" rel="tag">DDPG</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DFS/" rel="tag">DFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DL/" rel="tag">DL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DP/" rel="tag">DP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DPG/" rel="tag">DPG</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DPoS/" rel="tag">DPoS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DQN/" rel="tag">DQN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Daemon-Thread/" rel="tag">Daemon Thread</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Deadlock/" rel="tag">Deadlock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decision-Tree/" rel="tag">Decision Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Density-based-Clustering/" rel="tag">Density-based Clustering</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Deque/" rel="tag">Deque</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Derivative/" rel="tag">Derivative</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dictionary-Learning/" rel="tag">Dictionary Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dijkstra/" rel="tag">Dijkstra</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dimension-Reduction/" rel="tag">Dimension Reduction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Directional-Derivative/" rel="tag">Directional Derivative</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Discrete-Uniform-Distribution/" rel="tag">Discrete Uniform Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Diversity-Enhance/" rel="tag">Diversity Enhance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Diversity-Measure/" rel="tag">Diversity Measure</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dockerfile/" rel="tag">Dockerfile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Double-DQN/" rel="tag">Double DQN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Double-Q-learning/" rel="tag">Double Q-learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dueling-DQN/" rel="tag">Dueling DQN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dutch-Trace/" rel="tag">Dutch Trace</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/EI/" rel="tag">EI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ENAS/" rel="tag">ENAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ERM/" rel="tag">ERM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Edmonds-Karp/" rel="tag">Edmonds-Karp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Eligibility-Trace/" rel="tag">Eligibility Trace</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ensemble-Learning/" rel="tag">Ensemble Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ensemble-Selection/" rel="tag">Ensemble Selection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/EnumMap/" rel="tag">EnumMap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/EnumSet/" rel="tag">EnumSet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Erlang-Distribution/" rel="tag">Erlang Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Error-Rate/" rel="tag">Error Rate</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Escape-Analysis/" rel="tag">Escape Analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Evolutionary-Algorithm/" rel="tag">Evolutionary Algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Exclusive-Locks/" rel="tag">Exclusive Locks</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Executor/" rel="tag">Executor</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ExecutorService/" rel="tag">ExecutorService</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Expectation/" rel="tag">Expectation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Exploration-Exploitation-dilemma/" rel="tag">Exploration-Exploitation dilemma</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Exponential-Distribution/" rel="tag">Exponential Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/F1-Measure/" rel="tag">F1 Measure</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FLP/" rel="tag">FLP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Factory-Method-Pattern/" rel="tag">Factory Method Pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fair-DARTS/" rel="tag">Fair DARTS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fair-Lock/" rel="tag">Fair Lock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FairNAS/" rel="tag">FairNAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Feature-Selection/" rel="tag">Feature Selection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FetchFailedException/" rel="tag">FetchFailedException</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Floyd-Warshall/" rel="tag">Floyd-Warshall</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ford-Fulkerson/" rel="tag">Ford-Fulkerson</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Future/" rel="tag">Future</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FutureTask/" rel="tag">FutureTask</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GBDT/" rel="tag">GBDT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GC/" rel="tag">GC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GDBT-NAS/" rel="tag">GDBT-NAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GFS/" rel="tag">GFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GP/" rel="tag">GP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Geometric-Distribution/" rel="tag">Geometric Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Gibbs-Sampling/" rel="tag">Gibbs Sampling</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Gini-Index/" rel="tag">Gini Index</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Gradient/" rel="tag">Gradient</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Gradient-Descent/" rel="tag">Gradient Descent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GreedyNAS/" rel="tag">GreedyNAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HA/" rel="tag">HA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HMM/" rel="tag">HMM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HPO/" rel="tag">HPO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hadoop/" rel="tag">Hadoop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Happens-Before/" rel="tag">Happens-Before</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hash-Based-Shuffle/" rel="tag">Hash-Based Shuffle</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hedged-Read/" rel="tag">Hedged Read</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hermitan-Matrix/" rel="tag">Hermitan Matrix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hierarchical-Clustering/" rel="tag">Hierarchical Clustering</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hinge-Regression/" rel="tag">Hinge Regression</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hoeffding-s-Inequality/" rel="tag">Hoeffding&#39;s Inequality</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hot-Fields/" rel="tag">Hot Fields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HuffmanCode/" rel="tag">HuffmanCode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HyperNet/" rel="tag">HyperNet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hyperband/" rel="tag">Hyperband</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hyperopt/" rel="tag">Hyperopt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hypothesis-Test/" rel="tag">Hypothesis Test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ID3/" rel="tag">ID3</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Imitation-Learning/" rel="tag">Imitation Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Importance-Sampling/" rel="tag">Importance Sampling</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Independence/" rel="tag">Independence</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Information-Entropy/" rel="tag">Information Entropy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Information-Gain/" rel="tag">Information Gain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Information-Gain-Ratio/" rel="tag">Information Gain Ratio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Interruptible-Lock/" rel="tag">Interruptible Lock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Isometry/" rel="tag">Isometry</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jensen-s-Inequality/" rel="tag">Jensen&#39;s  Inequality</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Johnson/" rel="tag">Johnson</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K-armed-bandit/" rel="tag">K-armed bandit</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K-means/" rel="tag">K-means</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KLDA/" rel="tag">KLDA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KMP/" rel="tag">KMP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KPCA/" rel="tag">KPCA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KTT/" rel="tag">KTT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kernel-Function/" rel="tag">Kernel Function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kruskal/" rel="tag">Kruskal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LASSO/" rel="tag">LASSO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LATE/" rel="tag">LATE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LCS/" rel="tag">LCS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LDA/" rel="tag">LDA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLMS/" rel="tag">LLMS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LMS/" rel="tag">LMS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LSM/" rel="tag">LSM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LSTD/" rel="tag">LSTD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LSTM/" rel="tag">LSTM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LVQ/" rel="tag">LVQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LVW/" rel="tag">LVW</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lagrange-Multiplier/" rel="tag">Lagrange Multiplier</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Laplacian-Correction/" rel="tag">Laplacian Correction</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lasso-Regression/" rel="tag">Lasso Regression</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Latch/" rel="tag">Latch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Law-of-Large-Numbers/" rel="tag">Law of Large Numbers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Least-Squares/" rel="tag">Least Squares</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LightGBM/" rel="tag">LightGBM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Likelihood-Ratio/" rel="tag">Likelihood Ratio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linear-Algebra/" rel="tag">Linear Algebra</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linear-Regression/" rel="tag">Linear Regression</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LinkedList/" rel="tag">LinkedList</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Livelock/" rel="tag">Livelock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lock-Coarsening/" rel="tag">Lock Coarsening</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lock-Contention/" rel="tag">Lock Contention</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lock-Granularity/" rel="tag">Lock Granularity</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lock-Scope/" rel="tag">Lock Scope</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lock-Striping/" rel="tag">Lock Striping</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Logistic-Regression/" rel="tag">Logistic Regression</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MAP/" rel="tag">MAP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MDP/" rel="tag">MDP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MDS/" rel="tag">MDS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ML/" rel="tag">ML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MLE/" rel="tag">MLE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MRv1/" rel="tag">MRv1</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MSE/" rel="tag">MSE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MST/" rel="tag">MST</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Macro-Average/" rel="tag">Macro Average</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mark-Word/" rel="tag">Mark Word</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markov-Chain/" rel="tag">Markov Chain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markov-chain/" rel="tag">Markov chain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markov-s-Inequality/" rel="tag">Markov&#39;s Inequality</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Math/" rel="tag">Math</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Matrix-Completion/" rel="tag">Matrix Completion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mean/" rel="tag">Mean</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MemTable/" rel="tag">MemTable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Memory-Synchronization/" rel="tag">Memory Synchronization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Memory-Bank/" rel="tag">Memory-Bank</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Micro-Average/" rel="tag">Micro Average</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mixture-of-Gaussian/" rel="tag">Mixture-of-Gaussian</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Monte-Carlo-Learning/" rel="tag">Monte Carlo Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Monte-Carlo-Methods/" rel="tag">Monte Carlo Methods</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Morris-Traversal/" rel="tag">Morris Traversal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Multivariate-Decision-Tree/" rel="tag">Multivariate Decision Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mysql/" rel="tag">Mysql</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NAO/" rel="tag">NAO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NAS/" rel="tag">NAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NASNet/" rel="tag">NASNet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NASP/" rel="tag">NASP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NSGA-II/" rel="tag">NSGA-II</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Naive-Bayes-Classifiers/" rel="tag">Naive Bayes Classifiers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NoisyDARTS/" rel="tag">NoisyDARTS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Normal/" rel="tag">Normal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Normal-Distribution/" rel="tag">Normal Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ODE/" rel="tag">ODE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Observer-Pattern/" rel="tag">Observer Pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/One-Shot/" rel="tag">One-Shot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Open-Call/" rel="tag">Open Call</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Optimistic-Lock/" rel="tag">Optimistic Lock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/P-DARTS/" rel="tag">P-DARTS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PAC/" rel="tag">PAC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PBFT/" rel="tag">PBFT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PC-DARTS/" rel="tag">PC-DARTS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PCA/" rel="tag">PCA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PDF/" rel="tag">PDF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PGD/" rel="tag">PGD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PI/" rel="tag">PI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PMF/" rel="tag">PMF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PR/" rel="tag">PR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Partial-Derivative/" rel="tag">Partial Derivative</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pascal-Distribution/" rel="tag">Pascal Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Paxos/" rel="tag">Paxos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pessimistic-Lock/" rel="tag">Pessimistic Lock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Piggyback/" rel="tag">Piggyback</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PoS/" rel="tag">PoS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PoW/" rel="tag">PoW</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Poison-Pill/" rel="tag">Poison Pill</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Poisson-Distribution/" rel="tag">Poisson Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Policy-Gradient/" rel="tag">Policy Gradient</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Polled-Lock/" rel="tag">Polled Lock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Possion-Process/" rel="tag">Possion Process</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Precision/" rel="tag">Precision</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Prim/" rel="tag">Prim</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Probability/" rel="tag">Probability</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Protoytpe-based-Clustering/" rel="tag">Protoytpe-based Clustering</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ProxylessNAS/" rel="tag">ProxylessNAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Publish-Subscribe-Pattern/" rel="tag">Publish-Subscribe Pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Q-learning/" rel="tag">Q-learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/REINFORCE/" rel="tag">REINFORCE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RIP/" rel="tag">RIP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RL/" rel="tag">RL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RMQ/" rel="tag">RMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RNN/" rel="tag">RNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ROAR/" rel="tag">ROAR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ROC/" rel="tag">ROC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raft/" rel="tag">Raft</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Random-Forest/" rel="tag">Random Forest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Rayleigh-quotient/" rel="tag">Rayleigh quotient</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Read-Write-Lock/" rel="tag">Read-Write Lock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Recall/" rel="tag">Recall</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReenTrantLock/" rel="tag">ReenTrantLock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reentrant-Lock/" rel="tag">Reentrant Lock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReentrantReadWriteLock/" rel="tag">ReentrantReadWriteLock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reinforcement-Learning/" rel="tag">Reinforcement Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Relief/" rel="tag">Relief</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Relief-F/" rel="tag">Relief-F</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reordering/" rel="tag">Reordering</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Replacing-Trace/" rel="tag">Replacing Trace</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Robbins-Monro/" rel="tag">Robbins-Monro</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/S3VM/" rel="tag">S3VM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SAMR/" rel="tag">SAMR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SARSA/" rel="tag">SARSA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SGD/" rel="tag">SGD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SHAP/" rel="tag">SHAP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SMAC/" rel="tag">SMAC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SMASH/" rel="tag">SMASH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SMBO/" rel="tag">SMBO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SMO/" rel="tag">SMO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SNAS/" rel="tag">SNAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SPFA/" rel="tag">SPFA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SPOS/" rel="tag">SPOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SRM/" rel="tag">SRM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSTable/" rel="tag">SSTable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SVD/" rel="tag">SVD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SVM/" rel="tag">SVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SVR/" rel="tag">SVR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sarsa/" rel="tag">Sarsa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Saturation-Policies/" rel="tag">Saturation Policies</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Self-Adjont/" rel="tag">Self-Adjont</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Semaphore/" rel="tag">Semaphore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Semi-Gradient-Descent/" rel="tag">Semi-Gradient Descent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Semi-naive-Bayes-Classifiers/" rel="tag">Semi-naive Bayes Classifiers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Semi-supervised-Learning/" rel="tag">Semi-supervised Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SemiNAS/" rel="tag">SemiNAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sequential-Consistency/" rel="tag">Sequential Consistency</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shuffle/" rel="tag">Shuffle</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shutdown-Hock/" rel="tag">Shutdown Hock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Significance-Test/" rel="tag">Significance Test</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Simple-Factory-Pattern/" rel="tag">Simple Factory Pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Single-Path/" rel="tag">Single Path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SinglePath/" rel="tag">SinglePath</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SnowFlake/" rel="tag">SnowFlake</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Softmax/" rel="tag">Softmax</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sort-Based-Shuffle/" rel="tag">Sort-Based Shuffle</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark-SQL/" rel="tag">Spark SQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sparse-Coding/" rel="tag">Sparse Coding</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sparse-Representation/" rel="tag">Sparse Representation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sparse-Table/" rel="tag">Sparse Table</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spectral-Theorem/" rel="tag">Spectral Theorem</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Speculative-Task/" rel="tag">Speculative Task</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Stack/" rel="tag">Stack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Starvation/" rel="tag">Starvation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Statistics/" rel="tag">Statistics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Stochastic-Process/" rel="tag">Stochastic Process</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Strategy-Pattern/" rel="tag">Strategy Pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Strong-Law-of-Large-Numbers/" rel="tag">Strong Law of Large Numbers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Student-s-t-distribution/" rel="tag">Student&#39;s t-distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SuccessiveHalving/" rel="tag">SuccessiveHalving</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Supervised-Learning/" rel="tag">Supervised Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Synchronizer/" rel="tag">Synchronizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TD3/" rel="tag">TD3</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TPE/" rel="tag">TPE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TSVM/" rel="tag">TSVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Temporal-Difference-Learning/" rel="tag">Temporal Difference Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Temporal-Difference-Learning/" rel="tag">Temporal-Difference Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ThreadLocal/" rel="tag">ThreadLocal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ThreadPoolExecutor/" rel="tag">ThreadPoolExecutor</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Timed-Lock/" rel="tag">Timed Lock</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Total-Derivative/" rel="tag">Total Derivative</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Total-Probability-Theorem/" rel="tag">Total Probability Theorem</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tungsten-Sort-Shuffle/" rel="tag">Tungsten-Sort Shuffle</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UCB/" rel="tag">UCB</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Uniform-Distribution/" rel="tag">Uniform Distribution</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Unitary-Matrix/" rel="tag">Unitary Matrix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Univariate-Decision-Tree/" rel="tag">Univariate Decision Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Unsupervised-Learning/" rel="tag">Unsupervised Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Variance/" rel="tag">Variance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VisualVM/" rel="tag">VisualVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Viterbi/" rel="tag">Viterbi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Weak-Law-of-Large-Numbers/" rel="tag">Weak Law of Large Numbers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Weight-Sharing/" rel="tag">Weight Sharing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Weights-Sharing/" rel="tag">Weights Sharing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Work-Stealing/" rel="tag">Work Stealing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XGBoost/" rel="tag">XGBoost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/abstract-class/" rel="tag">abstract class</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/adjacency-matrix/" rel="tag">adjacency matrix</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/" rel="tag">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/augmenting-path/" rel="tag">augmenting path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/big-data/" rel="tag">big data</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/big-integer/" rel="tag">big integer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bilevel-optimization/" rel="tag">bilevel optimization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bit-manipulation/" rel="tag">bit manipulation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blockchain/" rel="tag">blockchain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/builder/" rel="tag">builder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/char/" rel="tag">char*</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud-cmputing/" rel="tag">cloud cmputing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cloud-computing/" rel="tag">cloud computing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/column-key/" rel="tag">column key</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/constructor/" rel="tag">constructor</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/context-bounds/" rel="tag">context bounds</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/contravariance/" rel="tag">contravariance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/covariance/" rel="tag">covariance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structure/" rel="tag">data structure</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/decoder/" rel="tag">decoder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deserializing/" rel="tag">deserializing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/direct-memory/" rel="tag">direct memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/divide-and-conquer/" rel="tag">divide and conquer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/encoder/" rel="tag">encoder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/epectation-Maximization-Algorithm/" rel="tag">epectation-Maximization Algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/epsilon-Greedy/" rel="tag">epsilon-Greedy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/equals/" rel="tag">equals</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/every-visit-Monte-Carlo-update/" rel="tag">every visit Monte Carlo update</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/existential-type/" rel="tag">existential type</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/experience-repaly/" rel="tag">experience repaly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/exploring-start/" rel="tag">exploring start</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/fast-matrix-exponentiation/" rel="tag">fast matrix exponentiation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/first-visit-Monte-Carlo-update/" rel="tag">first visit Monte Carlo update</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-approximation/" rel="tag">function approximation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/functional-programming/" rel="tag">functional programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/generalized-suffix-tree/" rel="tag">generalized suffix tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/go/" rel="tag">go</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/graph/" rel="tag">graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/graph-database/" rel="tag">graph database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/greedy/" rel="tag">greedy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/handle/" rel="tag">handle</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/heuristic-approaches/" rel="tag">heuristic approaches</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/higher-kinded-types/" rel="tag">higher kinded types</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/history-server/" rel="tag">history server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/history-sever/" rel="tag">history sever</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/id/" rel="tag">id</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/images/" rel="tag">images</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/immutable/" rel="tag">immutable</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/implicit/" rel="tag">implicit</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inorder/" rel="tag">inorder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/interrupt/" rel="tag">interrupt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invariance/" rel="tag">invariance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invokeAll/" rel="tag">invokeAll</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java-bean/" rel="tag">java bean</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jinfo/" rel="tag">jinfo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jmao/" rel="tag">jmao</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jps/" rel="tag">jps</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jstack/" rel="tag">jstack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jstat/" rel="tag">jstat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/leveldb/" rel="tag">leveldb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log4j/" rel="tag">log4j</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/manifest/" rel="tag">manifest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maximum-bipartite-matching/" rel="tag">maximum bipartite matching</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maxium-flow/" rel="tag">maxium flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mutiply-inheritance/" rel="tag">mutiply inheritance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/newTaskFor/" rel="tag">newTaskFor</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/object-pool/" rel="tag">object pool</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/object-serialization/" rel="tag">object serialization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/off-policy/" rel="tag">off-policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/on-policy/" rel="tag">on-policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/override/" rel="tag">override</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path-dependent-type/" rel="tag">path-dependent type</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/policy-evaluation/" rel="tag">policy evaluation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/policy-gradient/" rel="tag">policy gradient</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/policy-improvement/" rel="tag">policy improvement</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/policy-iteration/" rel="tag">policy iteration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/postorder/" rel="tag">postorder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/preorder/" rel="tag">preorder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reachability-analysis/" rel="tag">reachability analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/readObject/" rel="tag">readObject</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/readResolve/" rel="tag">readResolve</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reference-chain/" rel="tag">reference chain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reference-counting/" rel="tag">reference counting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reflect/" rel="tag">reflect</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rm/" rel="tag">rm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/row-key/" rel="tag">row key</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/scala/" rel="tag">scala</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/segment-tree/" rel="tag">segment tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/semaphore/" rel="tag">semaphore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sequence-to-sequence/" rel="tag">sequence-to-sequence</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/serialization-proxy-pattern/" rel="tag">serialization proxy pattern</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/serializing/" rel="tag">serializing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/singleton/" rel="tag">singleton</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/skiplist/" rel="tag">skiplist</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/soft-policy/" rel="tag">soft policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sort/" rel="tag">sort</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/specialized-method/" rel="tag">specialized method</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/static-factory-method/" rel="tag">static factory method</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string/" rel="tag">string</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/structural-type/" rel="tag">structural type</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sudo/" rel="tag">sudo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tail-recursion/" rel="tag">tail recursion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/target-network/" rel="tag">target network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tee/" rel="tag">tee</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/telescoping-Constructor/" rel="tag">telescoping Constructor</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trait/" rel="tag">trait</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tree/" rel="tag">tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/type/" rel="tag">type</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/type-projection/" rel="tag">type projection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unconfigurableExecutorService/" rel="tag">unconfigurableExecutorService</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/value-iteration/" rel="tag">value iteration</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/variable-length-code/" rel="tag">variable-length code</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/variance/" rel="tag">variance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-bounds/" rel="tag">view bounds</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/" rel="tag">vim</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/writeObject/" rel="tag">writeObject</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/writeReplace/" rel="tag">writeReplace</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yum/" rel="tag">yum</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%8D%E5%BF%85%E8%A6%81%E5%AF%B9%E8%B1%A1/" rel="tag">不必要对象</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%AA%E5%AD%97%E8%8A%82%E6%B5%81%E6%94%BB%E5%87%BB/" rel="tag">伪字节流攻击</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E9%83%A8%E5%9F%9F%E7%9B%97%E7%94%A8%E6%94%BB%E5%87%BB/" rel="tag">内部域盗用攻击</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%AF%E4%BC%B8%E7%BC%A9/" rel="tag">可伸缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8%E5%8F%91%E5%B8%83/" rel="tag">安全发布</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%9A%E4%B8%BE/" rel="tag">枚举</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%88%E5%B0%81%E9%97%AD/" rel="tag">栈封闭</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AD%96%E7%95%A5%E6%9E%9A%E4%B8%BE/" rel="tag">策略枚举</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B4%A2%E5%BC%95/" rel="tag">索引</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/" rel="tag">虚拟化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%87%E6%9C%9F%E5%AF%B9%E8%B1%A1/" rel="tag">过期对象</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%80%B8%E5%87%BA/" rel="tag">逸出</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%87%8D%E5%85%A5/" rel="tag">重入</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%87%8D%E6%8E%92%E5%BA%8F/" rel="tag">重排序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%90%E5%BC%8F%E4%BD%9C%E7%94%A8%E5%9F%9F/" rel="tag">隐式作用域</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%90%E5%BC%8F%E5%8F%82%E6%95%B0/" rel="tag">隐式参数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%90%E5%BC%8F%E8%A7%86%E5%9B%BE/" rel="tag">隐式视图</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%90%E5%BC%8F%E8%BD%AC%E6%8D%A2/" rel="tag">隐式转换</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://github.com/">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://www.google.com/">Google</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://stackoverflow.com/">StackOverflow</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://leetcode.com/problemset/algorithms/">LeetCode</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://www.youtube.com/">YouTube</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">什么都想学，什么都学不会。</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页"></a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页"></a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0">读书笔记</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:hazzacheng@gmail.com" title="Email"></a>
+                            
+                                <a class="fa RSS" target="_blank" href="/atom.xml" title="RSS"></a>
+                            
+                                <a class="fa Github" target="_blank" href="https://github.com/HazzaCheng" title="Github"></a>
+                            
+                                <a class="fa 知乎" target="_blank" href="https://www.zhihu.com/people/hazzacheng" title="知乎"></a>
+                            
+                                <a class="fa 豆瓣" target="_blank" href="https://www.douban.com/people/HazzaCheng/" title="豆瓣"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-Docker中的镜像" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/blog/2018/01/19/Docker%E4%B8%AD%E7%9A%84%E9%95%9C%E5%83%8F/" class="article-date">
+      <time datetime="2018-01-19T11:30:17.000Z" itemprop="datePublished">2018-01-19</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Docker 学习笔记（三）- Docker中的镜像
+    </h1>
+  
+
+        <div style="margin-top:10px;">
+    <span class="post-time">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-keyboard-o"></i>
+        <span class="post-meta-item-text">  字数统计: </span>
+        <span class="post-count">9.7k 字</span>
+      </span>
+    </span>
+
+    <span class="post-time">
+      &nbsp; | &nbsp;
+      <span class="post-meta-item-icon">
+        <i class="fa fa-hourglass-half"></i>
+        <span class="post-meta-item-text">  阅读时长: </span>
+        <span class="post-count">38 分</span>
+      </span>
+    </span>
+
+    
+        <span id="busuanzi_container_page_pv">
+          &nbsp; | &nbsp;  本文总阅读量: <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+    
+</div>
+
+        <br>
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Cloud-Computing/">Cloud Computing</a><a class="article-category-link" href="/categories/Cloud-Computing/Docker/">Docker</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dockerfile/" rel="tag">Dockerfile</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cloud-computing/" rel="tag">cloud computing</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/" rel="tag">docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/images/" rel="tag">images</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/" rel="tag">虚拟化</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p><strong><em>版权声明：本文原创，转载请留意文尾，如有侵权请留言，谢谢</em></strong></p>
+<h1 id="引言">引言</h1>
+<p>　　这篇文章中我们主要来探讨下Docker镜像，它是用来启动容器的构建基石，本文的所用到的Dcoker版本是17.1，API版本是1.33，Go的版本是1.9.2，OS是基于Arch
+Linux的Manjaro。</p>
+<span id="more"></span>
+<h1 id="docker镜像的概念">Docker镜像的概念</h1>
+<p>　　总的来说，Docker镜像是由文件系统叠加而成的。</p>
+<h2 id="bootfs">bootfs</h2>
+<p>　　最底端是一个引导文件系统，即bootfs，这很像典型的Linux/Unix的引导文件系统。Docker用户几乎永远不会和引导文件系统有什么交互。实际上，当一个容器启动后，它将会被移到内存中，而引导文件系统则会被卸载（unmount），以留出更多的内存供initrd磁盘镜像使用。</p>
+<h2 id="rootfs">rootfs</h2>
+<p>　　Docker看起来很像一个典型的Linux虚拟化栈。实际上，Docker镜像的第二层是root文件系统rootfs，它位于引导文件系统之上。rootfs可以是一种或多种操作系统（如Centos或者Ubuntu系统）。</p>
+<h2 id="只读与联合加载">只读与联合加载</h2>
+<p>　　在传统的Linux引导过程中，root文件系统会最先以只读的方式加载，当引导结束并完成了完整性检查之后，它才会被切换为读写模式。但是在Docker里，root文件系统永远只能是只读状态，并且Docker利用联合加载（union
+mount）技术又会在root文件系统层上加载更多的只读文件系统。联合加载指的是一次同时加载多个文件系统，但是在外面看起来只能看到一个文件系统。联合加载会将各层文件系统叠加到一起，这样最终的文件系统会包含所有底层的文件和目录。</p>
+<h2 id="镜像">镜像</h2>
+<p>　　Docker将这样的文件系统称为镜像。一个镜像可以放到另一个镜像的顶部。位于下面的镜像称为父镜像（parent
+image），可以依次类推，直到镜像栈的最底部，最底部的镜像称为基础镜像（base
+image）。最后，当从一个镜像启动容器时，Docker会在该镜像的最顶层加载一个读写文件系统。我们想在Docker中运行的程序就是在这个读写层中执行的。下图是一张示意图：<br>
+<img src="/blog/2018/01/19/Docker%E4%B8%AD%E7%9A%84%E9%95%9C%E5%83%8F/docker-filesystems-multilayer.png" alt="The docker filesystem layers"></p>
+<h2 id="写时复制">写时复制</h2>
+<p>　　当Docker第一次启动一个容器时，初始的读写层是空的。当文件系统发生变化时，这些变化都会应用到这一层上。比如，如果想修改一个文件，这个文件首先会从该读写层下面的只读层复制到该读写层。该文件的只读版本依然存在，但是已经被读写层中的该文件副本所隐藏。
+　　通常这种机制被称为写时复制（copy on
+write），这也是使Docker如此强大的技术之一。每个只读镜像层都是只读的，并且以后永远不会变化。当创建一个新容器时，Docker会构建出一个镜像栈，并在栈的最顶端添加一个读写层。这个读写层再加上其下面的镜像层以及一些配置数据，就构成了一个容器。在上一章我们已经知道，容器是可以修改的，它们都有自己的状态，并且是可以启动和停止的。容器的这种特点加上镜像分层框架（image-layering
+framework），使我们可以快速构建镜像并运行包含我们自己的应用程序和服务的容器。</p>
+<h1 id="列出镜像">列出镜像</h1>
+<p>　　我们可以使用<code>docker images</code>命令来列出所有镜像。<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hazzacheng@hazzacheng-pc ~&gt; sudo docker images</span><br><span class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">ubuntu              latest              20c44cd7596f        2 weeks ago         123MB</span><br></pre></td></tr></table></figure>
+　　本地镜像都保存在Docker宿主机的/var/lib/docker目录下。每个镜像都保存在Docker所采用的存储驱动目录下面，如aufs或者devicemapper。也可以在/var/lib/docker/containers目录下面看到所有的容器。<br>
+　　镜像从仓库下载下来。镜像保存在仓库中，而仓库存在于Registry中。默认的Registry是由Docker公司运营的公共Registry服务，即Docker
+Hub，就如GitHub一样。<br>
+　　在Docker
+Hub（或者用户自己运营的Registry）中，镜像是保存在仓库中的。可以将镜像仓库想象为类似Git仓库的东西。它包括镜像、层以及关于镜像的元数据（metadata）。<br>
+　　每个镜像仓库都可以存放很多镜像（比如，ubuntu仓库包含了 Ubuntu
+12.04、12.10、13.04、13.10和14.04的镜像）。<br>
+　　我们可以用<code>docker pull</code>来拉取ubuntu仓库中的Ubuntu12.04的镜像。<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">hazzacheng@hazzacheng-pc ~&gt; sudo docker pull ubuntu:12.04</span><br><span class="line">12.04: Pulling from library/ubuntu</span><br><span class="line">d8868e50ac4c: Pull complete </span><br><span class="line">83251ac64627: Pull complete </span><br><span class="line">589bba2f1b36: Pull complete </span><br><span class="line">d62ecaceda39: Pull complete </span><br><span class="line">6d93b41cfc6b: Pull complete </span><br><span class="line">Digest: sha256:18305429afa14ea462f810146ba44d4363ae76e4c8dfc38288cf73aa07485005</span><br><span class="line">Status: Downloaded newer image for ubuntu:12.04</span><br><span class="line"></span><br><span class="line">hazzacheng@hazzacheng-pc ~&gt; sudo docker images</span><br><span class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">ubuntu              latest              20c44cd7596f        2 weeks ago         123MB</span><br><span class="line">ubuntu              12.04               5b117edd0b76        7 months ago        104MB</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+　　我们再用<code>docker images</code>命令来看一下，发现已经得到了Ubuntu的latest镜像和12.04镜像。这表明ubuntu镜像实际上是聚集在一个仓库下的一系列镜像。<br>
+　　我们看到Docker提供了TAG来区分同一个仓库中的不同镜像，如12.04、12.10、quantal或者precise等。每个标签对组成特定镜像的一些镜像层进行标记，比如，标签12.04就是对所有Ubuntu
+12.04镜像的层的标记。这种机制使得在同一个仓库中可以存储多个镜像。
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">hazzacheng@hazzacheng-pc ~&gt; sudo docker pull ubuntu:precise</span><br><span class="line">precise: Pulling from library/ubuntu</span><br><span class="line">Digest: sha256:18305429afa14ea462f810146ba44d4363ae76e4c8dfc38288cf73aa07485005</span><br><span class="line">Status: Downloaded newer image for ubuntu:precise</span><br><span class="line"></span><br><span class="line">hazzacheng@hazzacheng-pc ~&gt; sudo docker images</span><br><span class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">ubuntu              latest              20c44cd7596f        2 weeks ago         123MB</span><br><span class="line">ubuntu              12.04               5b117edd0b76        7 months ago        104MB</span><br><span class="line">ubuntu              precise             5b117edd0b76        7 months ago        104MB</span><br></pre></td></tr></table></figure>
+　　我们看一下上面的例子，我们可以通过在仓库名后面加上一个冒号和标签名来指定该仓库中的某一镜像，在我们的docker
+images输出中新的12.04镜像以相同的镜像ID出现了两次，这是因为一个镜像可以有多个标签。这使我们可以方便地对镜像进行打标签并且很容易查找镜像。在这个例子中，ID
+5b117edd0b76的镜像实际上被打上了12.04和precise两个标签，分别代表该Ubuntu发布版的版本号和代号。<br>
+　　Docker Hub中有两种类型的仓库：用户仓库（user
+repository）和顶层仓库（top-level
+repository）。用户仓库的镜像都是由Docker用户创建的，而顶层仓库则是由Docker内部的人来管理的。<br>
+　　用户仓库的命名由用户名和仓库名两部分组成，如hazzacheng/ubuntu，用户名：hazzacheng，仓库名：ubuntu。<br>
+　　与之相对，顶层仓库只包含仓库名部分，如ubuntu仓库。顶层仓库由Docker公司和由选定的能提供优质基础镜像的厂商（如Fedora团队提供了fedora镜像）管理，用户可以基于这些基础镜像构建自己的镜像。同时顶层仓库也代表了各厂商和Docker公司的一种承诺，即顶层仓库中的镜像是架构良好、安全且最新的。</p>
+<h1 id="拉取镜像">拉取镜像</h1>
+<hr>
+<p>　　用<code>docker run</code>命令从镜像启动一个容器时，如果该镜像不在本地，Docker会先从Docker
+Hub下载该镜像。如果没有指定具体的镜像标签，那么Docker会自动下载latest标签的镜像。<br>
+　　我们也可以向前面做的那样，通过<code>docker pull</code>来事先将该镜像拉取到本地。我们来拉取一个fedora的镜像：
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hazzacheng@hazzacheng-pc ~&gt; sudo docker pull fedora:20</span><br><span class="line">20: Pulling from library/fedora</span><br><span class="line">4abd98c7489c: Pull complete </span><br><span class="line">Digest: sha256:5d5a02b873d298da9bca4b84440c5cd698b0832560c850d92cf389cef58bc549</span><br><span class="line">Status: Downloaded newer image for fedora:20</span><br></pre></td></tr></table></figure>
+　　我们也可以通过<code>docker images</code>命令来只查看fedora的镜像：
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hazzacheng@hazzacheng-pc ~&gt; sudo docker images fedora</span><br><span class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">fedora              20                  ba74bddb630e        15 months ago       291MB</span><br></pre></td></tr></table></figure></p>
+<p>　　因为Docker
+Hub实在太慢了，还经常被墙，所以我们一般从国内的镜像源pull，例如网易蜂巢：<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">sudo docker pull hub.c.163.com/public/centos:7.2.1511</span><br><span class="line">7.2.1511: Pulling from public/centos</span><br><span class="line">a3ed95caeb02: Pull complete </span><br><span class="line">545d7a0a5d69: Pull complete </span><br><span class="line">391b1a24f697: Pull complete </span><br><span class="line">7925fb64b42b: Pull complete </span><br><span class="line">66edcdbd7fd5: Pull complete </span><br><span class="line">0046acf831b2: Pull complete </span><br><span class="line">b9bc9910c14f: Pull complete </span><br><span class="line">3965c1da099d: Pull complete </span><br><span class="line">2192a5a11821: Pull complete </span><br><span class="line">38535f20ee00: Pull complete </span><br><span class="line">d74d10b0ba21: Pull complete </span><br><span class="line">1da8ab1a04c1: Pull complete </span><br><span class="line">Digest: sha256:0bc43868ac6553fce2c2af378dc370ccab92bf68edc45224216447f58f651fd4</span><br><span class="line">Status: Downloaded newer image for hub.c.163.com/public/centos:7.2.1511</span><br></pre></td></tr></table></figure>
+　　我们也可以用阿里云的镜像加速来进行加速，具体做法请Google。</p>
+<h1 id="查找镜像">查找镜像</h1>
+<hr>
+<p>　　可以通过<code>docker search</code>查找所有Docker
+Hub上的公共的可用镜像，例如我们搜索下mysql： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">hazzacheng@hazzacheng-pc ~&gt; sudo docker search mysql</span><br><span class="line">NAME                                                   DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED</span><br><span class="line">mysql                                                  MySQL is a widely used, open-source relati...   5327                [OK]                </span><br><span class="line">mariadb                                                MariaDB is a community-developed fork of M...   1657                [OK]                </span><br><span class="line">mysql/mysql-server                                     Optimized MySQL Server Docker images. Crea...   370                                     [OK]</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+　　它返回了如下信息：</p>
+<ul>
+<li>NAME:仓库名</li>
+<li>DESCRIPTION:镜像描述</li>
+<li>STARS:用户评价，类似与GiyHub里的stars</li>
+<li>OFFICIAL:是否官方</li>
+<li>AUTOMATED:表示这个镜像是由Docker Hub的自动构建（Automated
+Build）流程创建的。</li>
+</ul>
+<h1 id="构建镜像">构建镜像</h1>
+<hr>
+<p>　　构建Docker镜像有以下两种方法：</p>
+<ul>
+<li>使用docker commit命令。</li>
+<li>使用docker build命令和Dockerfile文件。</li>
+</ul>
+<h2 id="登录到docker">登录到Docker</h2>
+<p>　　注册完帐号之后，我们可以通过<code>docker login</code>登录到Docker
+Hub，因为Docker
+Hub对于国内实在是太慢了，所以我们登录到网易的Register，这条命令将会完成登录到网易蜂巢的工作，并将认证信息保存起来以供后面使用。可以使用<code>docker logout</code>命令从一个Registry服务器退出。<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker login -u xxx -p xxx hub.c.163.com</span><br></pre></td></tr></table></figure> 　　用户的个人认证信息将会保存到<span class="math inline">\(HOME/.docker/config.json中，这里的\)</span>HOME指的应该是/root文件夹下。<br>
+　　因为Docker
+Hub实在太慢了，所以接下来的操作我们都使用网易蜂巢的服务。</p>
+<h2 id="用dockerfile构建镜像">用Dockerfile构建镜像</h2>
+<p>　　不推荐使用<code>docker commit</code>的方法来构建镜像，所以我们这里也不介绍那种方法了。推荐使用被称为Dockerfile的定义文件和<code>docker build</code>命令来构建镜像。Dockerfile使用基本的基于DSL（Domain
+Specific
+Language)）语法的指令来构建一个Docker镜像，我们推荐使用Dockerfile方法来代替docker
+commit，因为通过前者来构建镜像更具备可重复性、透明性以及幂等性。<br>
+　　一旦有了Dockerfile，我们就可以使用<code>docker build</code>命令基于该Dockerfile中的指令构建一个新的镜像。<br>
+　　我们创建一个包含简单Web服务器的Docker镜像。<br>
+　　我们先创建一个目录，里面保存初始的Dockerfile：<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hazzacheng@hazzacheng-pc ~&gt; mkdir static_web</span><br><span class="line">hazzacheng@hazzacheng-pc ~&gt; cd static_web/</span><br><span class="line">hazzacheng@hazzacheng-pc ~/static_web&gt; touch Dockerfile</span><br></pre></td></tr></table></figure>
+　　我们创建了一个名为static_web的目录用来保存Dockerfile，这个目录就是我们的构建环境（build
+environment），Docker则称此环境为上下文（context）或者构建上下文（build
+context）。Docker会在构建镜像时将构建上下文和该上下文中的文件和目录上传到Docker守护进程。这样Docker守护进程就能直接访问用户想在镜像中存储的任何代码、文件或者其他数据。<br>
+　　输入Dockerfile的内容：<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># Version: 0.0.1　 </span><br><span class="line">FROM ubuntu:latest</span><br><span class="line">MAINTAINER Hazza Cheng &quot;hazzacheng@gmail.com&quot;　 </span><br><span class="line">RUN apt-get update &amp;&amp; apt-get install -y nginx　 </span><br><span class="line">RUN echo &#x27;Hi, I am in your container&#x27; &gt; /usr/share/nginx/html/index.html　 </span><br><span class="line">EXPOSE 80</span><br></pre></td></tr></table></figure>
+　　Dockerfile由一系列指令和参数组成。每条指令，如FROM，都必须为大写字母，我们分别介绍一下它们。</p>
+<h3 id="from">FROM</h3>
+<p>　　每个Dockerfile的第一条指令必须是FROM。FROM指令指定一个已经存在的镜像，后续指令都将基于该镜像进行，这个镜像被称为基础镜像（base
+iamge）。</p>
+<h3 id="maintainer">MAINTAINER</h3>
+<p>　　接着指定了MAINTAINER指令，这条指令会告诉Docker该镜像的作者是谁，以及作者的电子邮件地址。这有助于标识镜像的所有者和联系方式。</p>
+<h3 id="run">RUN</h3>
+<p>　　然后就是run指令，RUN指令会在当前镜像中运行指定的命令，Dockerfile中的指令会按顺序从上到下执行，所以应该根据需要合理安排指令的顺序。每条指令都会创建一个新的镜像层并对镜像进行提交。Docker大体上按照如下流程执行Dockerfile中的指令：</p>
+<ul>
+<li>Docker从基础镜像运行一个容器。</li>
+<li>执行一条指令，对容器做出修改。</li>
+<li>执行类似docker commit的操作，提交一个新的镜像层。</li>
+<li>Docker再基于刚提交的镜像运行一个新容器。</li>
+<li>执行Dockerfile中的下一条指令，直到所有指令都执行完毕。</li>
+</ul>
+<p>　　因为每执行一条指令，就会提交一个新的镜像层，如果用户的Dockerfile由于某些原因（如某条指令失败了）没有正常结束，那么用户将得到了一个可以使用的镜像。这对调试非常有帮助：可以基于该镜像运行一个具备交互功能的容器，使用最后创建的镜像对为什么用户的指令会失败进行调试。<br>
+　　默认情况下，RUN指令会在shell里使用命令包装器/bin/sh
+-c来执行。如果是在一个不支持shell的平台上运行或者不希望在shell中运行（比如避免shell字符串篡改），也可以使用exec格式的RUN指令：<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RUN [ &quot;apt-get&quot;, &quot; install&quot;, &quot;-y&quot;, &quot;nginx&quot; ]</span><br></pre></td></tr></table></figure></p>
+<h3 id="expose">EXPOSE</h3>
+<p>　　最后设置了EXPOSE指令，这条指令告诉Docker该容器内的应用程序将会使用容器的指定端口。这并不意味着可以自动访问任意容器运行中服务的端口（这里是80）。出于安全的原因，Docker并不会自动打开该端口，而是需要用户在使用<code>docker run</code>运行容器时来指定需要打开哪些端口。一会儿我们将会看到如何从这一镜像创建一个新容器。可以指定多个EXPOSE指令来向外部公开多个端口。</p>
+<h2 id="基于dockerfile构建新镜像">基于Dockerfile构建新镜像</h2>
+<p>　　执行<code>docker build</code>命令时，Dockerfile中的所有指令都会被执行并且提交，并且在该命令成功结束后返回一个新镜像，我们来操作一下：
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">hazzacheng@hazzacheng-pc ~/static_web&gt; sudo docker build -t=&quot;hazzacheng/static_web:v1&quot; .</span><br><span class="line">Sending build context to Docker daemon  2.048kB</span><br><span class="line">Step 1/5 : FROM ubuntu:latest</span><br><span class="line">16.04: Pulling from library/ubuntu</span><br><span class="line">Digest: sha256:7c67a2206d3c04703e5c23518707bdd4916c057562dd51c74b99b2ba26af0f79</span><br><span class="line">Status: Downloaded newer image for ubuntu:16.04</span><br><span class="line"> ---&gt; 20c44cd7596f</span><br><span class="line">Step 2/5 : MAINTAINER Hazza Cheng &quot;hazzacheng@gmail.com&quot;</span><br><span class="line"> ---&gt; Running in 35ead1a7e3eb</span><br><span class="line"> ---&gt; a3c3c3fa91b7</span><br><span class="line">Step 3/5 : RUN apt-get update &amp;&amp; apt-get install -y nginx</span><br><span class="line"> ---&gt; Running in 1b386b6b18e2</span><br><span class="line">...</span><br><span class="line">hazzacheng@hazzacheng-pc ~/static_web&gt; sudo docker build -t=&quot;hazzacheng/static_web:v1&quot; .</span><br><span class="line">Sending build context to Docker daemon  2.048kB</span><br><span class="line">Step 1/5 : FROM ubuntu:latest</span><br><span class="line">16.04: Pulling from library/ubuntu</span><br><span class="line">Digest: sha256:7c67a2206d3c04703e5c23518707bdd4916c057562dd51c74b99b2ba26af0f79</span><br><span class="line">Status: Downloaded newer image for ubuntu:latest</span><br><span class="line"> ---&gt; 20c44cd7596f</span><br><span class="line">Step 2/5 : MAINTAINER Hazza Cheng &quot;hazzacheng@gmail.com&quot;</span><br><span class="line"> ---&gt; Running in 35ead1a7e3eb</span><br><span class="line"> ---&gt; a3c3c3fa91b7</span><br><span class="line">Step 3/5 : RUN apt-get update &amp;&amp; apt-get install -y nginx</span><br><span class="line"> ---&gt; Running in 1b386b6b18e2</span><br><span class="line"> ...</span><br><span class="line"> ---&gt; 7466d1df3456</span><br><span class="line">Step 4/5 : RUN echo &#x27;Hi, I am in your container&#x27; &gt; /usr/share/nginx/html/index.html</span><br><span class="line"> ---&gt; Running in c52e4b9e5e62</span><br><span class="line"> ---&gt; 95063d4e2b0e</span><br><span class="line">Step 5/5 : EXPOSE 80</span><br><span class="line"> ---&gt; Running in 841cb52e0856</span><br><span class="line"> ---&gt; 165e3539bd98</span><br><span class="line">Removing intermediate container 35ead1a7e3eb</span><br><span class="line">Removing intermediate container 1b386b6b18e2</span><br><span class="line">Removing intermediate container c52e4b9e5e62</span><br><span class="line">Removing intermediate container 841cb52e0856</span><br><span class="line">Successfully built 165e3539bd98</span><br><span class="line">Successfully tagged hazzacheng/static_web:v1</span><br></pre></td></tr></table></figure>
+　　如上所示，我们通过<code>-t</code>选项为新镜像设置了仓库，名称和一个标签。如果没有制定任何标签，Docker将会自动为镜像设置一个latest标签。<br>
+　　我们还可以通过Git仓库来构建Docker镜像： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker build -t=&quot;hazzacheng/static_web:v1&quot;　\</span><br><span class="line">git@github.com:hazzacheng/docker-static_web</span><br></pre></td></tr></table></figure>
+　　这里Docker假设在这个Git仓库的根目录下存在Dockerfile文件。<br>
+　　自Docker
+1.5.0开始，也可以通过-f标志指定一个区别于标准Dockerfile的构建源的位置:
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dockerbuild-t&quot;hazzacheng/static_- web&quot; -f path/to/file</span><br></pre></td></tr></table></figure>
+　　这个文件可以不必命名为Dockerfile，但是必须要位于构建上下文之中。</p>
+<h2 id="指令失败">指令失败</h2>
+<p>　　如果一个指令失败时，例如我们不小心将前面的nginx打成ngin，程序会构建到第四步时错误退出，但是我们可以用docker
+run命令来基于这次构建到目前为止已经成功的最后一步创建一个容器。</p>
+<h2 id="dockerfile和构建缓存">Dockerfile和构建缓存</h2>
+<p>　　由于每一步的构建过程都会将结果提交为镜像，所以Docker的构建镜像过程就显得非常聪明。它会将之前的镜像层看作缓存。比如，在我们的调试例子里，我们不需要在第1步到第3步之间进行任何修改，因此Docker会将之前构建时创建的镜像当做缓存并作为新的开始点。实际上，当再次进行构建时，Docker会直接从第4步开始。当之前的构建步骤没有变化时，这会节省大量的时间。如果真的在第1步到第3步之间做了什么修改，Docker则会从第一条发生了变化的指令开始。
+　　然而，有些时候需要确保构建过程不会使用缓存。比如，如果已经缓存了前面的第3步，即apt-get
+update，那么Docker将不会再次刷新APT包的缓存。这时用户可能需要取得每个包的最新版本。要想略过缓存功能，可以使用<code>docker build</code>的<code>--no-cache</code>标志。</p>
+<h2 id="基于构建缓存的dockerfile模板">基于构建缓存的Dockerfile模板</h2>
+<p>　　我们可以利用缓存实现简单的Dockerfile模板，比如在Dockerfile文件顶部增加包仓库或者更新包，从而尽可能确保缓存命中。我们可以在自己的Dockerfile文件顶部使用相同的指令集模板，例如对Ubuntu：
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FROM ubuntu:16.04　 </span><br><span class="line">MAINTAINER Hazza Cheng &quot;hazzacheng@gmail.com&quot;　 </span><br><span class="line">ENV REFRESHED_AT 2018-01-16</span><br><span class="line">RUN apt-get -qq update</span><br></pre></td></tr></table></figure>
+　　<code>FROM</code>和<code>MAINTAINER</code>都与我们前面所说的一样，<code>ENV</code>用来在镜像中设置环境变量。在这个例子里，我通过<code>ENV</code>指令来设置了一个名为<code>REFRESHED_AT</code>的环境变量，这个环境变量用来表明该镜像模板最后的更新时间。最后，我使用了<code>RUN</code>指令来运行<code>apt-get -qq update</code>命令。该指令运行时将会刷新APT包的缓存，用来确保我们能将要安装的每个软件包都更新到最新版本。<br>
+　　有了这个模板，如果想刷新一个构建，只需修改<code>ENV</code>指令中的日期。这使Docker在命中ENV指令时开始重置这个缓存，并运行后续指令而无须依赖该缓存。也就是说，<code>RUN apt-get update</code>这条指令将会被再次执行，包缓存也将会被刷新为最新内容。<br>
+　　可以扩展此模板，比如适配到不同的平台或者添加额外的需求。比如，可以支持一个fedora镜像:
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FROM fedora:20 </span><br><span class="line">MAINTAINER Hazza Cheng &quot;hazzacheng@gmail.com&quot;　 </span><br><span class="line">ENV REFRESHED_AT 2018-01-16</span><br><span class="line">RUN yum -q makecache</span><br></pre></td></tr></table></figure>
+　　如果我们想深入探究镜像是如何构建出来的，可以使用<code>docker history</code>:
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">hazzacheng@hazzacheng-pc ~/D/ubuntu_nginx&gt; sudo docker history hazzacheng/static_web:v1</span><br><span class="line">IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT</span><br><span class="line">19ac4c6d5a01        4 minutes ago       /bin/sh -c #(nop)  EXPOSE 80                    0B                  </span><br><span class="line">c559d8d9c6da        4 minutes ago       /bin/sh -c echo &#x27;Hi, I am in your container&#x27;…   27B                 </span><br><span class="line">c5ec0eb43d2f        4 minutes ago       /bin/sh -c apt-get install -y nginx             56.5MB              </span><br><span class="line">04a2d034d655        5 minutes ago       /bin/sh -c apt-get -qq update                   39.5MB              </span><br><span class="line">f6ccf8510418        7 minutes ago       /bin/sh -c #(nop)  ENV REFRESHED_AT=2018-01-…   0B                  </span><br><span class="line">0bd1ce7aa2e5        7 minutes ago       /bin/sh -c #(nop)  MAINTAINER Hazza Cheng &quot;h…   0B                  </span><br><span class="line">2a4cca5ac898        38 hours ago        /bin/sh -c #(nop)  CMD [&quot;/bin/bash&quot;]            0B                  </span><br><span class="line">&lt;missing&gt;           38 hours ago        /bin/sh -c mkdir -p /run/systemd &amp;&amp; echo &#x27;do…   7B                  </span><br><span class="line">&lt;missing&gt;           38 hours ago        /bin/sh -c sed -i &#x27;s/^#\s*\(deb.*universe\)$…   2.76kB              </span><br><span class="line">&lt;missing&gt;           38 hours ago        /bin/sh -c rm -rf /var/lib/apt/lists/*          0B                  </span><br><span class="line">&lt;missing&gt;           38 hours ago        /bin/sh -c set -xe   &amp;&amp; echo &#x27;#!/bin/sh&#x27; &gt; /…   745B                </span><br><span class="line">&lt;missing&gt;           38 hours ago        /bin/sh -c #(nop) ADD file:affda766655e01cbd…   111MB   </span><br></pre></td></tr></table></figure>
+　　从上面的结果可以看到新构建镜像的每一层，以及创建这些层的Dockerfile指令。</p>
+<h2 id="端口映射">端口映射</h2>
+<p>　　我们利用守护方式从镜像启动一个容器： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hazzacheng@hazzacheng-pc ~&gt; sudo docker run -d -p 80 --name static_web hazzacheng/static_web:v1 \</span><br><span class="line">                            nginx -g &quot;daemon off;&quot;</span><br><span class="line">c3ae5b033e273353291c97791f482d005715cdb7a7a7ea8918ae320a11113a84</span><br></pre></td></tr></table></figure>
+　　<code>-p</code>用来控制ocker在运行时应该公开哪些网络端口给外部（宿主机）。运行一个容器时，Docker可以通过两种方法来在宿主机上分配端口。</p>
+<ul>
+<li>Docker可以在宿主机上随机选择一个位于32768~61000的一个比较大的端口号来映射到容器中的80端口上。</li>
+<li>可以在Docker宿主机中指定一个具体的端口号来映射到容器中的80端口上。</li>
+</ul>
+<p>　　docker
+run命令将在Docker宿主机上随机打开一个端口，这个端口会连接到容器中的80端口上。我们来看一下：<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS              PORTS                   NAMES</span><br><span class="line">c3ae5b033e27        hazzacheng/static_web:v1   &quot;nginx -g &#x27;daemon of…&quot;   2 minutes ago       Up 2 minutes        0.0.0.0:32768-&gt;80/tcp   static_web</span><br></pre></td></tr></table></figure>
+　　可以看到，容器中的80端口映射到了宿主机的32768上，我们也可以通过<code>docker port</code>来查看容器的端口映射：
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hazzacheng@hazzacheng-pc ~&gt; sudo docker port static_web 80</span><br><span class="line">0.0.0.0:32768</span><br></pre></td></tr></table></figure>
+　　<code>-p</code>选项还为我们在将容器端口向宿主机公开时提供了一定的灵活性。比如，可以指定将容器中的端口映射到Docker宿主机的某一特定端口上，例如<code>-p 8080:80</code>会将容器内的80端口绑定到本地宿主机的8080端口上，我们需要小心使用，<strong>如果要运行多个容器，只有一个容器能成功地将端口绑定到本地宿主机上</strong>，这将会限制Docker的灵活性。
+　　我们也可以将端口绑定限制在特定的IP地址上，如<code>-p 127.0.0.1:80:80</code>，我们将容器内的80端口绑定到了本地宿主机的127.0.0.1这个IP的80端口上。我们也可以使用类似的方式将容器内的80端口绑定到一个宿主机的随机端口上，如<code>-p 127.0.0.1::80</code>。也可以通过在端口绑定时使用<code>/udp</code>后缀来指定UDP端口。<br>
+　　Docker还提供了一个更简单的方式，即<code>-P</code>参数，该参数可以用来对外公开在Dockerfile中通过<code>EXPOSE</code>指令公开的所有端口：
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d -P --name static_web hazzacheng/static_web:v1 \</span><br><span class="line">                            nginx -g &quot;daemon off;&quot;</span><br></pre></td></tr></table></figure>
+　　该命令会将容器内的80端口对本地宿主机公开，并且绑定到宿主机的一个随机端口上。该命令会将用来构建该镜像的Dockerfile文件中EXPOSE指令指定的其他端口也一并公开。</p>
+<h2 id="dockerfile指令">Dockerfile指令</h2>
+<p>　　我们介绍一些常用的Dockerfile指令，你也可以通过<a target="_blank" rel="noopener" href="https://docs.docker.com/engine/reference/builder">官方文档</a>来学习。</p>
+<h3 id="cmd">CMD</h3>
+<p>　　CMD指令用于指定一个容器启动时要运行的命令。这有点儿类似于<code>RUN</code>指令，只是<code>RUN</code>指令是指定镜像被构建时要运行的命令，而<code>CMD</code>是指定容器被启动时要运行的命令。需要注意的是，要运行的命令是存放在一个数组结构中的。这将告诉Docker按指定的原样来运行该命令。当然也可以不使用数组而是指定<code>CMD</code>指令，这时候Docker会在指定的命令前加上<code>/bin/sh -c</code>。这在执行该命令的时候可能会导致意料之外的行为，所以Docker推荐一直使用以数组语法来设置要执行的命令。例如下面的用法：<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CMD [&quot;/bin/bash&quot;]</span><br><span class="line">CMD [&quot;/bin/bash&quot;, &quot;-l&quot;]</span><br></pre></td></tr></table></figure>
+　　使用<code>docker run</code>命令可以覆盖<code>CMD</code>指令。如果我们在Dockerfile里指定了<code>CMD</code>指令，而同时在<code>docker run</code>命令行中也指定了要运行的命令，命令行中指定的命令会覆盖Dockerfile中的<code>CMD</code>指令。<br>
+　　在Dockerfile中<strong>只能指定一条<code>CMD</code>指令</strong>。如果指定了多条CMD指令，也只有<strong>最后一条</strong><code>CMD</code>指令会被使用。如果想在启动容器时运行多个进程或者多条命令，可以考虑使用类似<strong>Supervisor</strong>这样的服务管理工具。</p>
+<h3 id="entrypoint">ENTRYPOINT</h3>
+<p>　　<code>ENTRYPOINT</code>指令与<code>CMD</code>指令非常类似，也很容易和<code>CMD</code>指令弄混。这两个指令的区别是，我们可以在<code>docker run</code>命令行中覆盖<code>CMD</code>指令。有时候，我们希望容器会按照我们想象的那样去工作，这时候<code>CMD</code>就不太合适了。而<code>ENTRYPOINT</code>指令提供的命令则不容易在启动容器时被覆盖。实际上，<code>docker run</code>命令行中指定的任何参数都会被当做参数再次传递给<code>ENTRYPOINT</code>指令中指定的命令。例如：<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ENTRYPOINT [&quot;/usr/sbin/nginx&quot;, &quot;-g&quot;, &quot;daemon off;&quot;]</span><br></pre></td></tr></table></figure>
+　　<code>ENTRYPOINT</code>也可以和<code>CMD</code>一起使用，例如：<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ENTRYPOINT [&quot;/usr/sbin/nginx&quot;]　 </span><br><span class="line">CMD [&quot;-h&quot;]</span><br></pre></td></tr></table></figure>
+　　如果在启动容器时不指定任何参数，则在<code>CMD</code>指令中指定的<code>-h</code>参数会被传递给Nginx守护进程，即Nginx服务器会以<code>/usr/sbin/nginx -h</code>的方式启动，该命令用来显示Nginx的帮助信息。<br>
+　　这使我们可以构建一个镜像，该镜像既可以运行一个默认的命令，同时它也支持通过docker
+run命令行为该命令指定可覆盖的选项或者标志。<br>
+　　如果确实需要，用户也可以在运行时通过<code>docker run</code>的<code>--entrypoint</code>标志覆盖<code>ENTRYPOINT</code>指令。</p>
+<h3 id="workdir">WORKDIR</h3>
+<p>　　<code>WORKDIR</code>指令用来在从镜像创建一个新容器时，在容器内部设置一个工作目录，<code>ENTRYPOINT</code>和<code>CMD</code>指定的程序会在这个目录下执行。我们可以使用该指令为Dockerfile中后续的一系列指令设置工作目录，也可以为特定的指令设置不同的工作目录：<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">WORKDIR /opt/webapp/db　 </span><br><span class="line">RUN bundle install　 </span><br><span class="line">WORKDIR /opt/webapp　 </span><br><span class="line">ENTRYPOINT [ &quot;rackup&quot; ]</span><br></pre></td></tr></table></figure>
+　　可以通过<code>-w</code>标志在运行时覆盖工作目录：<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -ti -w /var/log ubuntu pwd　 /var/log</span><br></pre></td></tr></table></figure>
+　　该命令会将容器内的工作目录设置为<code>/var/log</code>。</p>
+<h3 id="env">ENV</h3>
+<p>　　<code>ENV</code>指令用来在镜像构建过程中设置环境变量。<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ENV JAVA_PATH /home/java/</span><br></pre></td></tr></table></figure>
+　　这个新的环境变量可以在后续的任何<code>RUN</code>指令中使用，可以在<code>ENV</code>指令中指定单个环境变量，也可以指定多个变量。<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ENV JAVA_PATH=/home/java JRE_PATH=/home/java/jre</span><br></pre></td></tr></table></figure>
+　　也可以使用<code>docker run</code>命令行的<code>-e</code>标志来传递环境变量。这些变量将只会在运行时有效：
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -ti -e &quot;WEB_PORT=8080&quot; ubuntu env</span><br></pre></td></tr></table></figure> 　　在容器中WEB_PORT环境变量被设为了8080。</p>
+<h3 id="user">USER</h3>
+<p>　　<code>USER</code>指令用来指定该镜像会以什么样的用户去运行，我们可以指定用户名或UID以及组或GID，甚至是两者的组合。<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">USER user　 </span><br><span class="line">USER user:group　 </span><br><span class="line">USER uid　 </span><br><span class="line">USER uid:gid　 </span><br><span class="line">USER user:gid　 </span><br><span class="line">USER uid:group</span><br></pre></td></tr></table></figure>
+　　也可以在<code>docker run</code>命令中通过-u标志来覆盖该指令指定的值。<br>
+　　如果不通过USER指令指定用户，默认用户为root。</p>
+<h3 id="volume">VOLUME</h3>
+<p>　　<code>VOLUME</code>指令用来向基于镜像创建的容器添加卷。一个卷是可以存在于一个或者多个容器内的特定的目录，这个目录可以绕过联合文件系统，并提供如下共享数据或者对数据进行持久化的功能：</p>
+<ul>
+<li>卷可以在容器间共享和重用。</li>
+<li>一个容器可以不是必须和其他容器共享卷。</li>
+<li>对卷的修改是立时生效的。</li>
+<li>对卷的修改不会对更新镜像产生影响。</li>
+<li>卷会一直存在直到没有任何容器再使用它。</li>
+</ul>
+<p>　　卷功能让我们可以将数据（如源代码）、数据库或者其他内容添加到镜像中而不是将这些内容提交到镜像中，并且允许我们在多个容器间共享这些内容。我们可以利用此功能来测试容器和内部的应用程序代码，管理日志，或者处理容器内部的数据库。
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VOLUME [&quot;/opt/project&quot;]</span><br></pre></td></tr></table></figure>
+　　这条指令将会为基于此镜像创建的任何容器创建一个名为<code>/opt/project</code>的挂载点。也可以通过指定数组的方式指定多个卷：<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VOLUME [&quot;/opt/project&quot;, &quot;/data&quot; ]</span><br></pre></td></tr></table></figure>
+　　<code>docker cp</code>是和<code>VOLUME</code>指令相关并且也是很实用的命令。该命令允许从容器复制文件和复制文件到容器上。</p>
+<h3 id="add">ADD</h3>
+<p>　　<code>ADD</code>指令用来将构建环境下的文件和目录复制到镜像中。例如，在安装一个应用程序时。<code>ADD</code>指令需要源文件位置和目的文件位置两个参数:<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ADD software.lic /opt/application/software.lic</span><br></pre></td></tr></table></figure>
+　　<code>ADD</code>指令将会将构建目录下的software.lic文件复制到<strong>镜像中</strong>的<code>/opt/application/software.lic</code>。<strong>指向源文件的位置参数可以是一个URL，或者构建上下文或环境中文件名或者目录。</strong>不能对构建目录或者上下文之外的文件进行<code>ADD</code>操作。
+　　在<code>ADD</code>文件时，Docker通过<strong>目的地址参数末尾</strong>的字符来判断文件源是目录还是文件。如果目的地址以/结尾，那么Docker就认为源位置指向的是目录。如果目的地址不是以/结尾，那么Docker就认为源位置指向的是文件。
+　　文件源也可以使用URL的格式：<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ADD http://wordpress.org/latest.zip /root/wordpress.zip</span><br></pre></td></tr></table></figure> 　　ADD在处理本地压缩文件（tar
+archive）时还有一些特殊处理。如果将一个压缩文件（合法的压缩文件包括gzip、bzip2、xz）指定为源文件，Docker会自动将压缩文件解开（unpack）：<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ADD latest.tar.gz /var/www/wordpress/</span><br></pre></td></tr></table></figure>
+　　这条命令会将压缩文件latest.tar.gz解开到/var/www/wordpress/目录下。Docker解开压缩文件的行为和使用带<code>-x</code>选项的<code>tar</code>命令一样：该指令执行后的输出是原目的目录已经存在的内容加上压缩文件中的内容。如果目的位置的目录下已经存在了和压缩文件同名的文件或者目录，那么目的位置中的文件或者目录不会被覆盖。<br>
+　　如果目的位置不存在的话，Docker将会为我们创建这个全路径，包括路径中的任何目录。新创建的文件和目录的模式为0755，并且UID和GID都是0。
+　　ADD指令会使得构建缓存变得无效，这一点也非常重要。如果通过ADD指令向镜像添加一个文件或者目录，那么这将使Dockerfile中的后续指令都不能继续使用之前的构建缓存。</p>
+<h3 id="copy">COPY</h3>
+<p>　　<code>COPY</code>指令非常类似于<code>ADD</code>，它们根本的不同是<code>COPY</code>只关心在构建上下文中复制本地文件，而不会去做文件提取（extraction）和解压（decompression）的工作
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">COPY conf.d/ /etc/apache2/</span><br></pre></td></tr></table></figure>
+　　这条指令将会把本地conf.d目录中的文件复制到/etc/apache2/目录中。<br>
+　　文件源路径必须是一个与当前构建环境相对的文件或者目录，本地文件都放到<strong>和Dockerfile同一个目录下。不能复制该目录之外的任何文件</strong>，因为构建环境将会上传到Docker守护进程，而复制是在Docker守护进程中进行的。任何位于构建环境之外的东西都是不可用的。<code>COPY</code>指令的目的位置则必须是容器内部的一个<strong>绝对路径</strong>。<br>
+　　任何由该指令创建的文件或者目录的UID和GID都会设置为0。
+　　如果源路径是一个目录，那么这个目录将整个被复制到容器中，包括文件系统元数据；如果源文件为任何类型的文件，则该文件会随同元数据一起被复制。在这个例子里，源路径以/结尾，所以Docker会认为它是目录，并将它复制到目的目录中。<br>
+　　如果目的位置不存在，Docker将会自动创建所有需要的目录结构，就像<code>mkdir -p</code>命令那样。</p>
+<h3 id="label">LABEL</h3>
+<p>　　<code>LABEL</code>指令用于为Docker镜像添加元数据。元数据以键值对的形式展现。
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LABEL version=&quot;1.0&quot; </span><br><span class="line">LABEL location=&quot;New York&quot; type=&quot;Data Center&quot; role=&quot;Web Server&quot;</span><br></pre></td></tr></table></figure>
+　　<code>LABEL</code>指令以label="value"的形式出现。可以在每一条指令中指定一个元数据，或者指定多个元数据，不同的元数据之间用空格分隔。推荐将所有的元数据都放到一条LABEL指令中，以<strong>防止不同的元数据指令创建过多镜像层</strong>。可以通过<code>docker inspect</code>命令来查看Docker镜像中的标签信息。</p>
+<h3 id="stopsignal">STOPSIGNAL</h3>
+<p>　　<code>STOPSIGNAL</code>指令用来设置停止容器时发送什么系统调用信号给容器。这个信号必须是内核系统调用表中合法的数，如9，或者SIGNAME格式中的信号名称，如SIGKILL。</p>
+<h3 id="arg">ARG</h3>
+<p>　　<code>ARG</code>指令用来定义可以在<code>docker build</code>命令运行时传递给构建运行时的变量，我们只需要在构建时使用<code>--build-arg</code>标志即可。用户只能在构建时指定在Dockerfile文件中定义过的参数。
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ARG build </span><br><span class="line">ARG webapp_user=user</span><br></pre></td></tr></table></figure>
+　　上面例子中第二条ARG指令设置了一个默认值，如果构建时没有为该参数指定值，就会使用这个默认值。我们在<code>docker build</code>中使用这些参数：
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker build --build-arg build=1234 -t hazzacheng/webapp .</span><br></pre></td></tr></table></figure>
+　　这里构建hazzacheng/webapp镜像时，<code>build</code>变量将会设置为1234，而<code>webapp_user</code>变量则会继承设置的默认值user。<br>
+　　请不要使用ARG来传递证书或者秘钥之类的信息，这些机密信息在构建过程中以及镜像的构建历史中会被暴露。<br>
+　　Docker预定义了一组<code>ARG</code>变量，可以在构建时直接使用，而不必再到Dockerfile中自行定义。<br>
+　　预定义ARG变量：<br>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">HTTP_PROXY </span><br><span class="line">http_proxy </span><br><span class="line">HTTPS_PROXY </span><br><span class="line">https_proxy </span><br><span class="line">FTP_PROXY </span><br><span class="line">ftp_proxy </span><br><span class="line">NO_PROXY </span><br><span class="line">no_proxy</span><br></pre></td></tr></table></figure>
+　　要想使用这些预定义的变量，只需要给<code>docker build</code>命令传递<code>--build-arg &lt;variable&gt;=&lt;value&gt;</code>标志就可以了。</p>
+<h3 id="onbuild">ONBUILD</h3>
+<p>　　<code>ONBUILD</code>指令能为镜像添加触发器（trigger）。当一个镜像被用做其他镜像的基础镜像时，例如用户的镜像需要从某未准备好的位置添加源代码，或者用户需要执行特定于构建镜像的环境的构建脚本，该镜像中的触发器将会被执行。<br>
+　　触发器会在构建过程中插入新指令，我们可以认为这些指令是紧跟在<code>FROM</code>之后指定的。触发器可以是任何构建指令：
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ONBUILD ADD . /app/src　 </span><br><span class="line">ONBUILD RUN cd /app/src &amp;&amp; make</span><br></pre></td></tr></table></figure>
+　　上面的代码将会在创建的镜像中加入<code>ONBUILD</code>触发器，<code>ONBUILD</code>指令可以在镜像上运行<code>docker inspect</code>命令来查看。<br>
+　　例如，我们为Apache2镜像构建一个全新的Dockerfile，该镜像名为hazzacheng/
+apache2<code>： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">FROM ubuntu:14.04　 </span><br><span class="line">MAINTAINER Hazza Cheng &quot;hazzacheng@gmail.com&quot;　 </span><br><span class="line">RUN apt-get -qq update &amp;&amp; apt-get -qq install -y apache2　 </span><br><span class="line">ENV APACHE_RUN_USER www-data　 </span><br><span class="line">ENV APACHE_RUN_GROUP www-data　 </span><br><span class="line">ENV APACHE_LOG_DIR /var/log/apache2　 </span><br><span class="line">ONBUILD ADD . /var/www/　 </span><br><span class="line">EXPOSE 80　 </span><br><span class="line">ENTRYPOINT [&quot;/usr/sbin/apache2&quot;]　 </span><br><span class="line">CMD [&quot;-D&quot;, &quot;FOREGROUND&quot;]</span><br></pre></td></tr></table></figure> 　　构建该镜像： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">hazzacheng@hazzacheng-pc ~/D/apache2&gt; sudo docker build -t=&quot;hazzacheng/apache2:1.0&quot; .</span><br><span class="line">Sending build context to Docker daemon  2.048kB</span><br><span class="line">Step 1/10 : FROM ubuntu:14.04</span><br><span class="line"> ---&gt; 02a63d8b2bfa</span><br><span class="line">Step 2/10 : MAINTAINER Hazza Cheng &quot;hazzacheng@gmail.com&quot;</span><br><span class="line"> ---&gt; Using cache</span><br><span class="line"> ---&gt; 5958e7d2e6ee</span><br><span class="line">Step 3/10 : RUN apt-get -qq update &amp;&amp; apt-get -qq install -y apache2</span><br><span class="line"> ---&gt; Running in 6602e39c1d1c</span><br><span class="line">...</span><br><span class="line">Removing intermediate container 6602e39c1d1c</span><br><span class="line"> ---&gt; 27bc656a7f72</span><br><span class="line">Step 4/10 : ENV APACHE_RUN_USER www-data</span><br><span class="line"> ---&gt; Running in 039181b26294</span><br><span class="line">Removing intermediate container 039181b26294</span><br><span class="line"> ---&gt; 859f7fde9c1e</span><br><span class="line">Step 5/10 : ENV APACHE_RUN_GROUP www-data</span><br><span class="line"> ---&gt; Running in 7c8fb7c92363</span><br><span class="line">Removing intermediate container 7c8fb7c92363</span><br><span class="line"> ---&gt; 38e48e99d7a4</span><br><span class="line">Step 6/10 : ENV APACHE_LOG_DIR /var/log/apache2</span><br><span class="line"> ---&gt; Running in a9b51450c5f7</span><br><span class="line">Removing intermediate container a9b51450c5f7</span><br><span class="line"> ---&gt; 13a9b236ab6c</span><br><span class="line">Step 7/10 : ONBUILD ADD . /var/www/</span><br><span class="line"> ---&gt; Running in a13a07301846</span><br><span class="line">Removing intermediate container a13a07301846</span><br><span class="line"> ---&gt; 9324a7ba8a37</span><br><span class="line">Step 8/10 : EXPOSE 80</span><br><span class="line"> ---&gt; Running in fedb23f77928</span><br><span class="line">Removing intermediate container fedb23f77928</span><br><span class="line"> ---&gt; e3c98bab1099</span><br><span class="line">Step 9/10 : ENTRYPOINT [&quot;/usr/sbin/apache2&quot;]</span><br><span class="line"> ---&gt; Running in d7a1a4307afc</span><br><span class="line">Removing intermediate container d7a1a4307afc</span><br><span class="line"> ---&gt; bb2f359867fc</span><br><span class="line">Step 10/10 : CMD [&quot;-D&quot;, &quot;FOREGROUND&quot;]</span><br><span class="line"> ---&gt; Running in 9b5a3977ab5e</span><br><span class="line">Removing intermediate container 9b5a3977ab5e</span><br><span class="line"> ---&gt; bcf933e3caec</span><br><span class="line">Successfully built bcf933e3caec</span><br><span class="line">Successfully tagged hazzacheng/apache2:1.0</span><br></pre></td></tr></table></figure> 　　在新构建的镜像中包含一条</code>ONBUILD<code>指令，该指令会使用</code>ADD<code>指令将构建环境所在的目录下的内容全部添加到镜像中的/var/www/目录下。我们可以轻而易举地将这个Dockerfile作为一个通用的Web应用程序的模板，可以基于这个模板来构建Web应用程序。   　　我们可以通过构建一个名为webapp的镜像来看看如何使用镜像模板功能。它的Dockerfile如代码如下：   <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FROM hazzacheng/apache2:1.0</span><br><span class="line">MAINTAINER Hazza Cheng &quot;hazzacheng@gmail.com&quot;　 </span><br><span class="line">ENV APPLICATION_NAME webapp　 </span><br><span class="line">ENV ENVIRONMENT development</span><br></pre></td></tr></table></figure> 　　让我们看看构建这个镜像时将会发生什么事情：   <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">hazzacheng@hazzacheng-pc ~/D/webapp&gt; sudo docker build -t=&quot;hazzacheng/webapp:1.0&quot; .</span><br><span class="line">Sending build context to Docker daemon  2.048kB</span><br><span class="line">Step 1/4 : FROM hazzacheng/apache2:1.0</span><br><span class="line"># Executing 1 build trigger</span><br><span class="line"> ---&gt; 68b20313194d</span><br><span class="line">Step 2/4 : MAINTAINER Hazza Cheng &quot;hazzacheng@gmail.com&quot;</span><br><span class="line"> ---&gt; Running in 5834328436f9</span><br><span class="line">Removing intermediate container 5834328436f9</span><br><span class="line"> ---&gt; 5ae1b436c698</span><br><span class="line">Step 3/4 : ENV APPLICATION_NAME webapp</span><br><span class="line"> ---&gt; Running in 852154b72d50</span><br><span class="line">Removing intermediate container 852154b72d50</span><br><span class="line"> ---&gt; 2e3b1b38b4d9</span><br><span class="line">Step 4/4 : ENV ENVIRONMENT development</span><br><span class="line"> ---&gt; Running in 2e43a07c66a1</span><br><span class="line">Removing intermediate container 2e43a07c66a1</span><br><span class="line"> ---&gt; 32dfacc87317</span><br><span class="line">Successfully built 32dfacc87317</span><br><span class="line">Successfully tagged hazzacheng/webapp:1.0</span><br><span class="line"></span><br></pre></td></tr></table></figure> 　　可以清楚地看到，在</code>FROM<code>指令之后，Docker插入了一条</code>ADD<code>指令，这条</code>ADD<code>指令就是在</code>ONBUILD<code>触发器中指定的。执行完该</code>ADD<code>指令后，Docker才会继续执行构建文件中的后续指令。这种机制使我每次都会将本地源代码添加到镜像，就像上面我们做到的那样，也支持我为不同的应用程序进行一些特定的配置或者设置构建信息。这时，可以将hazzacheng/apache2当做一个镜像模板。   　　</code>ONBUILD<code>触发器会按照在父镜像中指定的顺序执行，并且只能被继承一次，**也就是说只能在子镜像中执行，而不会在孙子镜像中执行**。如果我们再基于hazzacheng/apache2构建一个镜像，则新镜像是hazzacheng/apache2的孙子镜像，因此在该镜像的构建过程中，</code>ONBUILD<code>触发器是不会被执行的。   　　这里有好几条指令是不能用在</code>ONBUILD<code>指令中的，包括</code>FROM<code>、</code>MAINTAINER<code>和</code>ONBUILD`本身。之所以这么规定是为了防止在
+Dockerfile构建过程中产生递归调用的问题。</p>
+<h1 id="提交镜像">提交镜像</h1>
+<p>　　镜像构建完毕之后，我们也可以将它上传到Docker
+Hub上面去，也可以推送到其他的Registry，例如网易蜂巢，这样其他人就能使用这个镜像了。比如，我们可以在组织内共享这个镜像，或者完全公开这个镜像。<br>
+　　这里我们将其推送到网易蜂巢上去：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">hazzacheng@hazzacheng-pc ~/D/webapp&gt; sudo docker tag hazzacheng/static_web:v1 hub.c.163.com/hazzacheng/static_web:v1</span><br><span class="line">hazzacheng@hazzacheng-pc ~/D/webapp&gt; sudo docker push hub.c.163.com/hazzacheng/static_web:v1</span><br><span class="line">The push refers to repository [hub.c.163.com/hazzacheng/static_web]</span><br><span class="line">a37eded3e1c4: Pushed </span><br><span class="line">8c1b6608d69f: Pushed </span><br><span class="line">71e0479ba020: Pushed </span><br><span class="line">8600ee70176b: Pushed </span><br><span class="line">2bbb3cec611d: Pushed </span><br><span class="line">d2bb1fc88136: Pushed </span><br><span class="line">a6a01ad8b53f: Pushed </span><br><span class="line">833649a3e04c: Pushed </span><br><span class="line">v1: digest: sha256:899e70dd39817ea95acc5ae01d335108bbd4cc5969daf4e965deeb30e8f30460 size: 8626</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>　　再push之前我们必须先打上网易蜂巢的tag，即<code>hub.c.163.com</code>。</p>
+<h1 id="删除镜像">删除镜像</h1>
+<p>　　我们使用<code>docker rmi</code>来删除镜像，这个命令也支持删除多个镜像，我们也可以使用
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker rmi `docker images -a -q`</span><br></pre></td></tr></table></figure> 　　来删除所有镜像。</p>
+<h1 id="相关内容">相关内容</h1>
+<ul>
+<li><a href="https://chengfeng96.com/blog/2017/11/23/Docker%E5%88%9D%E4%BD%93%E9%AA%8C/">Docker
+学习笔记（一）- Docker初体验</a></li>
+<li><a href="https://chengfeng96.com/blog/2017/11/30/Docker%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/">Docker
+学习笔记（二）- Docker基础命令</a></li>
+<li><a href="https://chengfeng96.com/blog/2018/01/19/Docker%E4%B8%AD%E7%9A%84%E9%95%9C%E5%83%8F/">Docker
+学习笔记（三）- Docker中的镜像</a></li>
+</ul>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/blog/2018/01/19/Docker%E4%B8%AD%E7%9A%84%E9%95%9C%E5%83%8F/">Docker 学习笔记（三）- Docker中的镜像</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页"></a></p>
+        <p><span>发布时间:</span>2018-01-19, 19:30:17</p>
+        <p><span>最后更新:</span>2021-03-02, 14:07:29</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/blog/2018/01/19/Docker%E4%B8%AD%E7%9A%84%E9%95%9C%E5%83%8F/" title="Docker 学习笔记（三）- Docker中的镜像">http://chengfeng96.com/blog/2018/01/19/Docker%E4%B8%AD%E7%9A%84%E9%95%9C%E5%83%8F/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://chengfeng96.com/blog/2018/01/19/Docker%E4%B8%AD%E7%9A%84%E9%95%9C%E5%83%8F/　　作者: " title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/blog/2018/01/20/Java%E4%B8%AD%E7%94%A8Deque%E6%8E%A5%E5%8F%A3%E4%BB%A3%E6%9B%BFStack%E6%8E%A5%E5%8F%A3%E5%AE%8C%E6%88%90%E6%A0%88%E5%8A%9F%E8%83%BD/">
+                    Java中用Deque接口代替Stack接口完成栈功能
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/blog/2017/12/24/%E8%AF%BB%E3%80%8A%E6%9E%81%E7%AE%80%E5%AE%87%E5%AE%99%E5%8F%B2%E3%80%8B--%E6%B8%BA%E5%B0%8F%E7%9A%84%E6%88%91%E4%BB%AC%EF%BC%8C%E6%97%A0%E9%99%90%E7%9A%84%E6%80%9D%E7%BB%B4/">
+                    读《极简宇宙史》--渺小的我们，无限的思维
+                </a>
+            </div>
+        
+    </nav>
+
+  
+  
+    
+    <div style="padding: 0; margin: 20px auto; width: 90%; text-align: center;">
+      <br>
+      <div>坚持原创技术分享，您的支持将鼓励我继续创作，π（3.14）元就够啦！</div>
+      <br>
+      <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+        <div class="btn btn-pay">打赏支持</div>
+      </button>
+      <br>
+      <br>
+      <div id="QR" style="display: none;">
+        
+          <div id="wechat" style="display: inline-block;">
+            <img id="wechat_qr" src="/img/wechat.jpg" alt=" WeChat Pay"/>
+            <p>微信打赏</p>
+          </div>
+        
+        
+          <div id="alipay" style="display: inline-block">
+            <img id="alipay_qr" src="/img/alipay.jpg" alt=" Alipay"/>
+            <p>支付宝打赏</p>
+          </div>
+        
+        <br>
+        <br>
+      </div>
+    </div>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BC%95%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">引言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#docker%E9%95%9C%E5%83%8F%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="toc-number">2.</span> <span class="toc-text">Docker镜像的概念</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#bootfs"><span class="toc-number">2.1.</span> <span class="toc-text">bootfs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rootfs"><span class="toc-number">2.2.</span> <span class="toc-text">rootfs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AA%E8%AF%BB%E4%B8%8E%E8%81%94%E5%90%88%E5%8A%A0%E8%BD%BD"><span class="toc-number">2.3.</span> <span class="toc-text">只读与联合加载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%95%9C%E5%83%8F"><span class="toc-number">2.4.</span> <span class="toc-text">镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E6%97%B6%E5%A4%8D%E5%88%B6"><span class="toc-number">2.5.</span> <span class="toc-text">写时复制</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%97%E5%87%BA%E9%95%9C%E5%83%8F"><span class="toc-number">3.</span> <span class="toc-text">列出镜像</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F"><span class="toc-number">4.</span> <span class="toc-text">拉取镜像</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9F%A5%E6%89%BE%E9%95%9C%E5%83%8F"><span class="toc-number">5.</span> <span class="toc-text">查找镜像</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E9%95%9C%E5%83%8F"><span class="toc-number">6.</span> <span class="toc-text">构建镜像</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%99%BB%E5%BD%95%E5%88%B0docker"><span class="toc-number">6.1.</span> <span class="toc-text">登录到Docker</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8dockerfile%E6%9E%84%E5%BB%BA%E9%95%9C%E5%83%8F"><span class="toc-number">6.2.</span> <span class="toc-text">用Dockerfile构建镜像</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#from"><span class="toc-number">6.2.1.</span> <span class="toc-text">FROM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#maintainer"><span class="toc-number">6.2.2.</span> <span class="toc-text">MAINTAINER</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#run"><span class="toc-number">6.2.3.</span> <span class="toc-text">RUN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#expose"><span class="toc-number">6.2.4.</span> <span class="toc-text">EXPOSE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8Edockerfile%E6%9E%84%E5%BB%BA%E6%96%B0%E9%95%9C%E5%83%8F"><span class="toc-number">6.3.</span> <span class="toc-text">基于Dockerfile构建新镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E5%A4%B1%E8%B4%A5"><span class="toc-number">6.4.</span> <span class="toc-text">指令失败</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dockerfile%E5%92%8C%E6%9E%84%E5%BB%BA%E7%BC%93%E5%AD%98"><span class="toc-number">6.5.</span> <span class="toc-text">Dockerfile和构建缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E6%9E%84%E5%BB%BA%E7%BC%93%E5%AD%98%E7%9A%84dockerfile%E6%A8%A1%E6%9D%BF"><span class="toc-number">6.6.</span> <span class="toc-text">基于构建缓存的Dockerfile模板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84"><span class="toc-number">6.7.</span> <span class="toc-text">端口映射</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dockerfile%E6%8C%87%E4%BB%A4"><span class="toc-number">6.8.</span> <span class="toc-text">Dockerfile指令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#cmd"><span class="toc-number">6.8.1.</span> <span class="toc-text">CMD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#entrypoint"><span class="toc-number">6.8.2.</span> <span class="toc-text">ENTRYPOINT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#workdir"><span class="toc-number">6.8.3.</span> <span class="toc-text">WORKDIR</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#env"><span class="toc-number">6.8.4.</span> <span class="toc-text">ENV</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#user"><span class="toc-number">6.8.5.</span> <span class="toc-text">USER</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#volume"><span class="toc-number">6.8.6.</span> <span class="toc-text">VOLUME</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#add"><span class="toc-number">6.8.7.</span> <span class="toc-text">ADD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#copy"><span class="toc-number">6.8.8.</span> <span class="toc-text">COPY</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#label"><span class="toc-number">6.8.9.</span> <span class="toc-text">LABEL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#stopsignal"><span class="toc-number">6.8.10.</span> <span class="toc-text">STOPSIGNAL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#arg"><span class="toc-number">6.8.11.</span> <span class="toc-text">ARG</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#onbuild"><span class="toc-number">6.8.12.</span> <span class="toc-text">ONBUILD</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8F%90%E4%BA%A4%E9%95%9C%E5%83%8F"><span class="toc-number">7.</span> <span class="toc-text">提交镜像</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E9%95%9C%E5%83%8F"><span class="toc-number">8.</span> <span class="toc-text">删除镜像</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9"><span class="toc-number">9.</span> <span class="toc-text">相关内容</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"Docker 学习笔记（三）- Docker中的镜像　| 零一人生　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+        <section id="comments">
+    <style> aside.comment-bar { margin: auto 30px; }</style>
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function(){
+            this.page.url = 'http://chengfeng96.com/blog/2018/01/19/Docker%E4%B8%AD%E7%9A%84%E9%95%9C%E5%83%8F/';
+            this.page.identifier = 'blog/2018/01/19/Docker中的镜像/';
+        };
+        var loadComment = function(){
+            var d = document, s = d.createElement('script');
+            s.src = '//HelloHazzaCheng.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        }
+    </script>
+    
+    <script> loadComment(); </script>
+
+</section>
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/blog/2018/01/20/Java%E4%B8%AD%E7%94%A8Deque%E6%8E%A5%E5%8F%A3%E4%BB%A3%E6%9B%BFStack%E6%8E%A5%E5%8F%A3%E5%AE%8C%E6%88%90%E6%A0%88%E5%8A%9F%E8%83%BD/" title="上一篇: Java中用Deque接口代替Stack接口完成栈功能">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/blog/2017/12/24/%E8%AF%BB%E3%80%8A%E6%9E%81%E7%AE%80%E5%AE%87%E5%AE%99%E5%8F%B2%E3%80%8B--%E6%B8%BA%E5%B0%8F%E7%9A%84%E6%88%91%E4%BB%AC%EF%BC%8C%E6%97%A0%E9%99%90%E7%9A%84%E6%80%9D%E7%BB%B4/" title="下一篇: 读《极简宇宙史》--渺小的我们，无限的思维">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/blog/2021/11/21/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%E5%8D%81%EF%BC%89-PC-DARTS/">NAS 学习笔记（二十）- PC-DARTS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2021/11/17/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%B9%9D%EF%BC%89-ProxylessNAS/">NAS 学习笔记（十九）- ProxylessNAS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2021/04/06/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E5%85%AB%EF%BC%89-DARTS-PT/">NAS 学习笔记（十八）- DARTS+PT</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/12/04/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%B8%83%EF%BC%89-SNAS/">NAS 学习笔记（十七）- SNAS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/11/09/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E5%85%AD%EF%BC%89-NoisyDARTS/">NAS 学习笔记（十六）- NoisyDARTS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/11/06/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%BA%94%EF%BC%89-P-DARTS/">NAS 学习笔记（十五）- P-DARTS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/07/27/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E5%9B%9B%EF%BC%89-GDBT-NAS/">NAS 学习笔记（十四）- GDBT-NAS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/07/24/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%B8%89%EF%BC%89-NASP/">NAS 学习笔记（十三）- NASP</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/07/18/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%BA%8C%EF%BC%89-SemiNAS/">NAS 学习笔记（十二）- SemiNAS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/07/16/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%B8%80%EF%BC%89-GreedyNAS/">NAS 学习笔记（十一）- GreedyNAS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/07/13/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%EF%BC%89-Fair-DARTS/">NAS 学习笔记（十）- Fair DARTS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/07/11/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B9%9D%EF%BC%89-FairNAS/">NAS 学习笔记（九）- FairNAS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/07/09/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%85%AB%EF%BC%89-SPOS/">NAS 学习笔记（八）- SPOS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/06/23/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%83%EF%BC%89-NAO/">NAS 学习笔记（七）- NAO</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/06/16/XGBoost-%E5%92%8C-Lightgbm-%E7%AC%94%E8%AE%B0/">XGBoost 和 Lightgbm 笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/02/28/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%85%AB%EF%BC%89-%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E7%9A%84%E7%A1%AE%E5%AE%9A%E6%80%A7%E7%AD%96%E7%95%A5/">强化学习笔记（八）- 连续空间的确定性策略</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/02/24/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%83%EF%BC%89-%E8%B5%84%E6%A0%BC%E8%BF%B9/">强化学习笔记（七）- 资格迹</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/02/21/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%85%AD%EF%BC%89-%E7%AD%96%E7%95%A5%E6%A2%AF%E5%BA%A6/">强化学习笔记（六）- 策略梯度</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/02/19/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%94%EF%BC%89-%E5%87%BD%E6%95%B0%E8%BF%91%E4%BC%BC%E6%96%B9%E6%B3%95/">强化学习笔记（五）- 函数近似方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/02/16/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89-%E6%97%B6%E5%BA%8F%E5%B7%AE%E5%88%86%E5%AD%A6%E4%B9%A0/">强化学习笔记（四）- 时序差分学习</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/02/15/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89-%E8%92%99%E7%89%B9%E5%8D%A1%E7%BD%97%E6%96%B9%E6%B3%95/">强化学习笔记（三）- 蒙特卡罗方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/02/14/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E6%96%B9%E6%B3%95/">强化学习笔记（二）- 动态规划方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/02/11/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89-Markov-%E5%86%B3%E7%AD%96%E8%BF%87%E7%A8%8B%E6%A8%A1%E5%9E%8B/">强化学习笔记（一）- Markov 决策过程模型</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/12/03/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/">机器学习基础笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/12/02/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%85%AD%EF%BC%89-Evolution-NAS/">NAS 学习笔记（六）- Evolution NAS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/30/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%94%EF%BC%89-DARTS/">NAS 学习笔记（五）- DARTS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/28/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89-One-Shot-Architecture-Search/">NAS 学习笔记（四）- One-Shot Architecture Search</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/27/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89-ENAS/">NAS 学习笔记（三）- ENAS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/26/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89-SMASH/">NAS 学习笔记（二）- SMASH</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/26/NAS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89-NASNet/">NAS 学习笔记（一）- NASNet</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/19/BOHB-%E7%AC%94%E8%AE%B0/">AutoML HPO 学习笔记（五）- BOHB</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/18/Hyeperband-%E7%AC%94%E8%AE%B0/">AutoML HPO 学习笔记（四）- Hyeperband</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/15/SMAC-%E7%AC%94%E8%AE%B0/">AutoML HPO 学习笔记（三）- SMAC</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/13/Hyperopt-%E5%92%8C-TPE-%E7%AC%94%E8%AE%B0/">AutoML HPO 学习笔记（二）- Hyperopt 和 TPE</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/06/Ensemble-Selection-%E7%AC%94%E8%AE%B0/">Ensemble Selection 笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/09/08/%E8%B4%9D%E5%8F%B6%E6%96%AF%E4%BC%98%E5%8C%96%E7%AC%94%E8%AE%B0/">AutoML HPO 学习笔记（一）- 贝叶斯优化</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/07/26/%E8%AF%BB%E3%80%8A%E8%87%AA%E7%A7%81%E7%9A%84%E5%9F%BA%E5%9B%A0%E3%80%8B-%E7%88%B6%E6%AF%8D%E4%B8%BA%E5%95%A5%E6%80%BB%E6%98%AF%E6%97%A0%E7%A7%81%E7%9A%84/">读《自私的基因》--父母为啥总是无私的</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/06/20/%E9%9A%90%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E6%A8%A1%E5%9E%8B%E7%AC%94%E8%AE%B0/">机器学习基础（十三）- 隐马尔可夫模型笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/06/08/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">机器学习基础（十二）- 强化学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/05/26/%E5%8D%8A%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">机器学习基础（十一）- 半监督学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/05/21/%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9%E7%AC%94%E8%AE%B0/">机器学习基础（十）- 特征选择笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/05/19/%E5%A4%9A%E7%BB%B4%E7%BC%A9%E6%94%BEMDS%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95/">机器学习基础（九）- 多维缩放笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/05/17/%E8%81%9A%E7%B1%BB%E7%AC%94%E8%AE%B0/">机器学习基础（八）- 聚类笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/05/13/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">机器学习基础（七）- 集成学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/05/04/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%88%86%E7%B1%BB%E5%99%A8%E7%AC%94%E8%AE%B0/">机器学习基础（十四）- 贝叶斯分类器笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/04/28/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E9%93%BE%E7%AC%94%E8%AE%B0/">马尔可夫链笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/04/25/%E4%BC%AF%E5%8A%AA%E5%88%A9%E8%BF%87%E7%A8%8B%E5%92%8C%E6%B3%8A%E6%9D%BE%E8%BF%87%E7%A8%8B%E7%AC%94%E8%AE%B0/">伯努利过程和泊松过程笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/04/21/%E7%BB%8F%E5%85%B8%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD%E7%AC%94%E8%AE%B0/">经典统计推断笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/04/18/SVM%E7%AC%94%E8%AE%B0/">机器学习基础（六）- SVM 笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/04/11/%E8%AF%BB%E3%80%8A%E8%8F%8A%E4%B8%8E%E5%88%80%E3%80%8B-%E6%9C%89%E7%82%B9%E7%9F%9B%E7%9B%BE%E7%9A%84%E6%97%A5%E6%9C%AC%E4%BA%BA/">读《菊与刀》--有点矛盾的日本人</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/04/10/BP%E7%AE%97%E6%B3%95%E7%9A%84%E6%8E%A8%E5%AF%BC/">机器学习基础（五）- BP 算法推导</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/04/10/%E6%9E%81%E9%99%90%E7%90%86%E8%AE%BA%E7%AC%94%E8%AE%B0/">极限理论笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/04/06/%E5%9F%BA%E4%BA%8E%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%96%B9%E6%B3%95%E7%9A%84%E5%B8%B8%E8%A7%81%E4%BC%B0%E8%AE%A1%E6%96%B9%E6%B3%95/">基于贝叶斯方法的常见估计方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/04/05/%E5%86%B3%E7%AD%96%E6%A0%91%EF%BC%88Decision-Tree%EF%BC%89%E6%B5%85%E8%B0%88/">机器学习基础（四）- 决策树（Decision Tree）笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/03/20/Spark-Shuffle%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/">Spark Shuffle调研笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/03/18/%E8%AF%BB%E3%80%8A%E6%9E%AA%E7%82%AE%E3%80%81%E7%97%85%E8%8F%8C%E4%B8%8E%E9%92%A2%E9%93%81%E3%80%8B-%E9%83%BD%E6%98%AF%E8%80%81%E5%A4%A9%E7%88%B7%E8%B5%8F%E7%9A%84%E9%A5%AD/">读《枪炮、病菌与钢铁》--都是老天爷赏的饭</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/03/17/%E5%B8%B8%E8%A7%81%E8%BF%9E%E7%BB%AD%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F%E7%9A%84%E6%A6%82%E7%8E%87%E5%AF%86%E5%BA%A6%E5%87%BD%E6%95%B0%EF%BC%8C%E5%9D%87%E5%80%BC%E5%92%8C%E6%96%B9%E5%B7%AE/">常见连续随机变量的概率密度函数，均值和方差</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/03/14/%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90%EF%BC%88Principle-Component-Analysis-PCA%EF%BC%89%E6%B5%85%E8%B0%88/">机器学习基础（三）- 主成分分析（Principle Component Analysis, PCA）笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/03/06/%E5%B8%B8%E8%A7%81%E7%A6%BB%E6%95%A3%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F%E7%9A%84%E5%88%86%E5%B8%83%E5%88%97%EF%BC%8C%E5%9D%87%E5%80%BC%E5%92%8C%E6%96%B9%E5%B7%AE/">常见离散随机变量的分布列，均值和方差</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/02/25/%E4%B8%80%E4%BA%9B%E6%9C%89%E8%B6%A3%E7%9A%84%E6%A6%82%E7%8E%87%E9%97%AE%E9%A2%98/">一些有趣的概率问题</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/02/23/%E8%AF%BB%E3%80%8A%E8%8D%92%E8%AF%9E%E5%8C%BB%E5%AD%A6%E5%8F%B2%E3%80%8B--%E5%8C%BB%E5%AD%A6%E7%9A%84%E8%BF%9B%E6%AD%A5/">读《荒诞医学史》--医学的进步</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/02/16/%E8%AF%BB%E3%80%8A%E6%B8%85%E6%95%99%E5%BE%92%E7%9A%84%E7%A4%BC%E7%89%A9%E3%80%8B--%E5%B7%A5%E7%A8%8B%E5%B8%88%E6%96%87%E5%8C%96%E6%98%AF%E6%B8%85%E6%95%99%E5%BE%92%E7%9A%84%E7%B2%BE%E7%A5%9E%E5%90%97/">读《清教徒的礼物》--工程师文化是清教徒的精神吗</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/02/11/%E8%AF%BB%E3%80%8A%E7%A9%B7%E6%9F%A5%E7%90%86%E5%AE%9D%E5%85%B8%E3%80%8B--%E8%B7%A8%E5%AD%A6%E7%A7%91%E7%9A%84%E7%9F%A5%E8%AF%86/">读《穷查理宝典》--跨学科的知识</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/02/04/%E8%AF%BB%E3%80%8A%E5%B9%B3%E9%9D%A2%E5%9B%BD%E3%80%8B--%E5%9B%9B%E7%BB%B4%E4%B8%96%E7%95%8C%E7%9A%84%E2%80%9C%E4%BA%BA%E4%BB%AC%E2%80%9D%E5%A6%82%E4%BD%95%E7%9C%8B%E5%BE%85%E6%88%91%E4%BB%AC%E5%91%A2/">读《平面国》--四维世界的“人们”如何看待我们呢</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/02/02/%E5%AF%B9%E4%BA%8E%E6%A2%AF%E5%BA%A6%E7%9A%84%E7%90%86%E8%A7%A3/">对于梯度的理解</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/02/01/%E8%AF%BB%E3%80%8A5%E5%88%86%E9%92%9F%E5%95%86%E5%AD%A6%E9%99%A2%E2%80%A2%E5%95%86%E4%B8%9A%E7%AF%87%E3%80%8B--%E5%AD%A6%E7%82%B9%E5%95%86%E4%B8%9A%E5%A5%97%E8%B7%AF/">读《5分钟商学院•商业篇》--学点商业套路</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/31/Yarn%E5%9F%BA%E6%9C%AC%E6%9E%B6%E6%9E%84/">Yarn 基本架构</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/31/%E8%AF%BB%E3%80%8A%E4%BA%BA%E7%B1%BB%E7%AE%80%E5%8F%B2%E3%80%8B--%E6%99%BA%E4%BA%BA%E7%9A%84%E8%99%9A%E6%9E%84%E7%8E%B0%E5%AE%9E/">读《人类简史》--智人的虚构现实</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/30/%E4%B8%80%E4%BA%9BHadoop%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98%E7%9A%84%E6%96%B9%E6%B3%95/">一些 Hadoop 性能调优的方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/30/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E4%B9%8B%E5%A5%87%E5%BC%82%E5%80%BC%E5%88%86%E8%A7%A3%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8/">线性代数之奇异值分解及其应用</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/29/Hadoop-MapReduce%E4%B8%ADTask%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/">Hadoop MapReduce中Task的执行流程</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/27/Hadoop%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%8E%A8%E6%B5%8B%E6%89%A7%E8%A1%8C%E7%AE%97%E6%B3%95/">Hadoop的任务推测执行算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/25/%E4%B8%BASpark-SQL%E6%B7%BB%E5%8A%A0%E5%8E%9F%E7%94%9F%E8%87%AA%E5%AE%9A%E4%B9%89%E8%AF%AD%E6%B3%95/">为Spark SQL添加原生自定义语法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/19/Hadoop%20MRv1%E5%9F%BA%E6%9C%AC%E6%9E%B6%E6%9E%84/">Hadoop MRv1基本架构</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/18/%E8%AF%BB%E3%80%8A%E6%97%A0%E6%95%8C%E8%88%B0%E9%98%9F%E3%80%8B--%E7%9B%B8%E4%BF%A1%E2%80%9C%E5%A5%87%E8%BF%B9%E2%80%9D%E7%9A%84%E2%80%9C%E6%97%A0%E6%95%8C%E2%80%9D%E8%88%B0%E9%98%9F/">读《无敌舰队》--相信“奇迹”的“无敌”舰队</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/17/%E8%AF%BB%E3%80%8A%E8%96%9B%E5%85%86%E4%B8%B0%E7%BB%8F%E6%B5%8E%E5%AD%A6%E8%AE%B2%E4%B9%89%E3%80%8B--%E4%BA%BA%E4%BA%BA%E9%83%BD%E5%BA%94%E8%AF%A5%E5%AD%A6%E7%82%B9%E7%BB%8F%E6%B5%8E%E5%AD%A6/">读《薛兆丰经济学讲义》--人人都应该学点经济学</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/01/05/%E8%AF%BB%E3%80%8A%E5%BE%AE%E8%A7%82%E5%8A%A8%E6%9C%BA%E4%B8%8E%E5%AE%8F%E8%A7%82%E8%A1%8C%E4%B8%BA%E3%80%8B--%E4%BA%BA%E4%BB%A5%E7%BE%A4%E5%88%86%EF%BC%8C%E4%BA%92%E7%9B%B8%E4%BE%9D%E8%B5%96/">读《微观动机与宏观行为》--人以群分，互相依赖</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/12/29/%E8%AF%BB%E3%80%8A%E5%A6%82%E4%BD%95%E6%89%8D%E8%83%BD%E4%B8%8D%E7%84%A6%E8%99%91%E3%80%8B--%E4%B8%93%E6%B3%A8%E6%88%98%E8%83%9C%E7%84%A6%E8%99%91/">读《如何才能不焦虑》--专注战胜焦虑</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/12/22/%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%88%86%E6%9E%90%EF%BC%88Linear-Discriminant-Analysis%EF%BC%89%E6%B5%85%E8%B0%88/">机器学习基础（二）- 线性判别分析（Linear Discriminant Analysis）笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/12/21/%E8%AF%BB%E3%80%8A%E4%BA%B2%E5%AF%86%E5%85%B3%E7%B3%BB%E3%80%8B--%E4%BA%B2%E5%AF%86%E5%85%B3%E7%B3%BB%E7%9A%84%E5%A5%97%E8%B7%AF/">读《亲密关系》--亲密关系的套路</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/12/15/%E5%AF%B9%E6%95%B0%E5%87%A0%E7%8E%87%E5%9B%9E%E5%BD%92%EF%BC%88Logistic-Regression%EF%BC%89%E6%B5%85%E8%B0%88/">机器学习基础（一）- 对数几率回归（Logistic Regression）笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/12/07/%E8%AF%BB%E3%80%8A%E5%8D%8E%E6%9D%89%E8%AE%B2%E9%80%8F%E5%AD%99%E5%AD%90%E5%85%B5%E6%B3%95%E3%80%8B--%E4%BB%A5%E5%A5%87%EF%BC%88ji%EF%BC%89%E8%83%9C/">读《华杉讲透孙子兵法》--以奇(ji)胜</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/30/Hadoop%E5%92%8CSpark%E6%A0%B9%E6%8D%AElog4j%E8%87%AA%E5%AE%9A%E4%B9%89%E6%97%A5%E5%BF%97%E8%BE%93%E5%87%BA/">Hadoop和Spark根据log4j自定义日志输出</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/27/%E8%AF%BB%E3%80%8A%E6%B0%B8%E6%81%92%E7%9A%84%E8%BE%B9%E7%BC%98%E3%80%8B--%E5%B8%9D%E7%8E%8B%E6%81%AF%E4%BA%89/">读《永恒的边缘》--帝王息争</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/25/HDFS%E9%87%8C%E7%9A%84Hedged-Read%E6%BA%90%E7%A0%81%E4%BB%A5%E5%8F%8A%E5%B1%80%E9%99%90%E6%80%A7%E5%88%86%E6%9E%90/">HDFS里的Hedged Read源码以及局限性分析</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/22/HDFS%E9%87%8Cread-operation%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90%E4%BB%A5%E5%8F%8A%E8%AF%BB%E6%85%A2%E8%8A%82%E7%82%B9%E9%97%AE%E9%A2%98%E6%8E%A2%E7%A9%B6/">HDFS里read operation源码解析以及读慢节点问题探究</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/16/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BJava%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/">Java 并发编程（十四）- 内存模型</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/15/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%9D%9E%E9%98%BB%E5%A1%9E%E5%90%8C%E6%AD%A5%E6%9C%BA%E5%88%B6/">Java 并发编程（十三）- 非阻塞同步机制</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/13/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BAQS/">Java 并发编程（十二）- AQS</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/12/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E6%98%BE%E7%A4%BA%E9%94%81/">Java 并发编程（十一）- 显示锁</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/09/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E6%80%A7%E8%83%BD%E4%B8%8E%E5%8F%AF%E4%BC%B8%E7%BC%A9%E6%80%A7/">Java 并发编程（五）- 构建高效且可伸缩的结果缓存</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/08/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%BF%E5%85%8D%E6%B4%BB%E8%B7%83%E6%80%A7%E7%9A%84%E5%8D%B1%E9%99%A9/">Java 并发编程（九）- 避免活跃性的危险</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/06/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E4%BD%BF%E7%94%A8/">Java 并发编程（八）- 线程池的使用</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/04/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%8F%96%E6%B6%88%E4%B8%8E%E5%85%B3%E9%97%AD/">Java 并发编程（七）- 取消与关闭</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/11/01/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8BExecutor/">Java 并发编程（六）- Executor</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/24/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%A4%BA%E4%BE%8B%E4%B9%8B%E6%9E%84%E5%BB%BA%E9%AB%98%E6%95%88%E4%B8%94%E5%8F%AF%E4%BC%B8%E7%BC%A9%E7%9A%84%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98/">Java 并发编程（五）- 构建高效且可伸缩的结果缓存</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/24/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%9F%BA%E7%A1%80%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%9D%97/">Java 并发编程（四）- 基础构建模块</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/22/Spark%E9%87%8CHistroy-Server%E4%B8%A2task%EF%BC%8Cjob%E5%92%8CStage%E9%97%AE%E9%A2%98%E8%B0%83%E7%A0%94/">Spark里Histroy Server丢task，job和Stage问题调研</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/22/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%8F%91%E5%B8%83-%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F/">设计模式之观察者模式和发布-订阅模式</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/21/%E8%AF%BB%E3%80%8A%E6%BC%AB%E6%AD%A5%E5%8D%8E%E5%B0%94%E8%A1%97%E3%80%8B--%E5%9C%A8%E9%9A%8F%E6%9C%BA%E4%B8%AD%E6%BC%AB%E6%AD%A5%EF%BC%8C%E5%9C%A8%E9%9A%8F%E6%9C%BA%E4%B8%AD%E7%A8%B3%E5%AE%9A/">读《漫步华尔街》--在随机中漫步，在随机中稳定</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/21/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%BB%84%E5%90%88/">Java 并发编程（三）- 对象的组合</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/18/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%85%B1%E4%BA%AB/">Java 并发编程（二）- 对象的共享</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/15/%E6%B5%85%E8%B0%88%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/">Java 并发编程（一）- 浅谈线程安全</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/14/Spark%E9%87%8C%E6%9C%89%E5%85%B3History-Server%E7%9A%84scheduler-delay%E7%9B%B8%E5%85%B3%E6%BA%90%E7%A0%81%E7%9A%84%E4%B8%80%E6%AC%A1%E8%B0%83%E7%A0%94/">Spark里有关History Server的scheduler delay相关源码的一次调研</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/11/JVM%E4%B8%AD%E7%9A%84%E5%88%86%E6%B4%BE%E6%9C%BA%E5%88%B6/">JVM 学习（十）- 分派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/10/10/JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/">JVM 学习（九）- 类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/09/26/%E8%AF%BB%E3%80%8A%E4%B8%96%E7%95%8C%E7%9A%84%E5%87%9B%E5%86%AC%E3%80%8B--%E5%B9%B3%E6%B0%91%E7%9A%84%E6%88%98%E4%BA%89/">读《世界的凛冬》--平民的战争</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/08/05/%E8%B7%B3%E8%A1%A8%E7%AE%80%E6%98%93%E5%AE%9E%E7%8E%B0/">跳表简易实现</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/08/05/%E8%AF%BB%E3%80%8A%E5%B7%A8%E4%BA%BA%E7%9A%84%E9%99%A8%E8%90%BD%E3%80%8B--%E5%B9%B3%E6%B0%91%E7%9A%84%E5%B4%9B%E8%B5%B7/">读《巨人的陨落》--平民的崛起</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/08/04/LSM%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/">LSM调研</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/07/29/B%E6%A0%91%E5%92%8CB-%E6%A0%91/">B树和B+树</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/07/28/Mysql%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95/">Mysql中的索引</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/07/19/BigTable%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/">BigTable调研笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/06/19/%E8%AF%BB%E3%80%8A%E6%94%B9%E5%8F%98%E5%BF%83%E7%90%86%E5%AD%A6%E7%9A%8440%E9%A1%B9%E7%A0%94%E7%A9%B6%E3%80%8B--%E5%88%9D%E6%8E%A2%E5%BF%83%E7%90%86%E5%AD%A6/">读《改变心理学的40项研究》--初探心理学</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/06/13/%E6%9C%80%E5%A4%A7%E4%BA%8C%E5%88%86%E5%9B%BE%E5%8C%B9%E9%85%8D/">最大二分图匹配</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/06/12/%E8%8E%8E%E5%A3%AB%E6%AF%94%E4%BA%9A%E5%9B%BE%E4%B8%8E%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93/">莎士比亚图与图数据库</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/06/12/%E6%9C%80%E5%B0%8F%E8%B4%B9%E7%94%A8%E6%9C%80%E5%A4%A7%E6%B5%81%E9%97%AE%E9%A2%98/">最小费用最大流问题</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/06/10/%E5%A2%9E%E5%B9%BF%E8%B7%AF%E5%AE%9A%E7%90%86%E5%92%8CEdmonds-Karp%E7%AE%97%E6%B3%95/">增广路定理和Edmonds-Karp算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/27/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">GO 学习笔记（九）- 单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/26/%E5%88%A9%E7%94%A8BFS%EF%BC%8CDFS%EF%BC%8CA-%E8%A7%A3%E5%86%B3%E5%85%AB%E6%95%B0%E7%A0%81%E9%9A%BE%E9%A2%98/">利用BFS，DFS，A*算法解决八数码难题</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/24/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%8F%8D%E5%B0%84/">GO 学习笔记（八）- 反射</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/17/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%B9%B6%E5%8F%91/">GO 学习笔记（七）- 并发</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/14/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%8E%A5%E5%8F%A3/">GO 学习笔记（六）- 接口</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/13/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%96%B9%E6%B3%95/">GO 学习笔记（五）- 方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/11/Linux%E4%B8%8B%E9%81%BF%E5%85%8Drm%E8%AF%AF%E5%88%A0/">Linux下避免rm误删</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/06/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%95%B0%E6%8D%AE/">GO 学习笔记（四）- 数据</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/04/%E5%88%86%E5%B8%83%E5%BC%8F%E8%87%AA%E5%A2%9EID%E7%AE%97%E6%B3%95SnowFlake/">分布式自增ID算法SnowFlake</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/05/04/JVM%E8%B0%83%E4%BC%98%E6%A1%88%E4%BE%8B/">JVM 学习（八）- 调优案例</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/11/JVM%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E4%B8%8E%E6%95%85%E9%9A%9C%E5%A4%84%E7%90%86%E5%B7%A5%E5%85%B7/">JVM 学习（七）- 性能监控与故障处理工具</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/09/%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7%E5%B0%8F%E7%BB%93/">位运算技巧小结</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/08/JVM%E4%B8%AD%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E4%B8%8E%E5%9B%9E%E6%94%B6%E7%AD%96%E7%95%A5/">JVM 学习（六）- 内存分配与回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/08/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%87%BD%E6%95%B0/">GO 学习笔记（三）- 函数</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/08/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E4%B9%8B%E8%A1%A8%E8%BE%BE%E5%BC%8F/">GO 学习笔记（二）- 表达式</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/08/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%8F%98%E9%87%8F/">GO 学习笔记（一）- 变量</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/07/JVM%E4%B8%AD%E7%9A%84%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/">JVM 学习（五）- 垃圾收集器</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/06/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/">设计模式之策略模式</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/05/JVM%E4%B8%AD%E7%9A%84GC%E7%AE%97%E6%B3%95/">JVM 学习（四）- GC 算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/05/JVM%E4%B8%AD%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%AD%98%E6%B4%BB%E5%88%A4%E6%96%AD/">JVM 学习（三）- 对象的存活判断</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/04/JVM%E4%B8%AD%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%AE%BF%E9%97%AE%E5%AE%9A%E4%BD%8D/">JVM 学习（二）- 对象的访问定位</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/04/03/JVM%E4%B8%AD%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80/">JVM 学习（一）- 对象的内存布局</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/03/24/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E4%B8%8B%E7%9A%84%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/">分布式系统下的共识算法调研笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/03/18/%E5%8C%BA%E5%9D%97%E9%93%BE%E7%AE%80%E5%8D%95%E5%8E%9F%E7%90%86%E5%8F%8APython%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84%E5%8C%BA%E5%9D%97%E9%93%BE/">区块链简单原理及Python实现简单的区块链</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/03/15/Scala%E9%87%8C%E7%9A%84%E5%9E%8B%E5%8F%98/">Scala学习笔记（十一）- Scala里的型变(Variance)</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/03/15/%E2%80%9C%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%EF%BC%8C%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F%EF%BC%8C%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%E2%80%9D/">策略模式之简单工厂模式，工厂方法模式，抽象工厂模式</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/25/%E5%B8%B8%E8%A7%81%E7%9A%84%E6%8E%92%E5%BA%8F%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0/">常见的排序算法实现</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/22/Johnson%E7%AE%97%E6%B3%95/">Johnson算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/20/Floyd-Warshall%E7%AE%97%E6%B3%95/">Floyd-Warshall算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/17/%E6%9C%80%E7%9F%AD%E8%B7%AF%E5%BE%84%E5%92%8C%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95/">最短路径和矩阵乘法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/14/SPFA%E7%AE%97%E6%B3%95/">SPFA算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/13/Dijkstra%E7%AE%97%E6%B3%95/">Dijkstra算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/12/Bellman-Ford%E7%AE%97%E6%B3%95/">Bellman-Ford算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/10/Prim%E7%AE%97%E6%B3%95/">Prim算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/10/Kruskal%E7%AE%97%E6%B3%95/">Kruskal算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/02/09/%E6%B5%85%E8%B0%88%E7%9F%A9%E9%98%B5%E5%BF%AB%E9%80%9F%E5%B9%82/">浅谈矩阵快速幂</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/01/20/Java%E4%B8%AD%E7%94%A8Deque%E6%8E%A5%E5%8F%A3%E4%BB%A3%E6%9B%BFStack%E6%8E%A5%E5%8F%A3%E5%AE%8C%E6%88%90%E6%A0%88%E5%8A%9F%E8%83%BD/">Java中用Deque接口代替Stack接口完成栈功能</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2018/01/19/Docker%E4%B8%AD%E7%9A%84%E9%95%9C%E5%83%8F/">Docker 学习笔记（三）- Docker中的镜像</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/12/24/%E8%AF%BB%E3%80%8A%E6%9E%81%E7%AE%80%E5%AE%87%E5%AE%99%E5%8F%B2%E3%80%8B--%E6%B8%BA%E5%B0%8F%E7%9A%84%E6%88%91%E4%BB%AC%EF%BC%8C%E6%97%A0%E9%99%90%E7%9A%84%E6%80%9D%E7%BB%B4/">读《极简宇宙史》--渺小的我们，无限的思维</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/11/30/Docker%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/">Docker 学习笔记（二）- Docker基础命令</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/11/28/%E6%9C%80%E5%A4%A7%E5%AD%90%E6%95%B0%E7%BB%84%E9%97%AE%E9%A2%98-The-maximum-subarray-problem/">最大子数组问题(The maximum-subarray problem)</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/11/23/Docker%E5%88%9D%E4%BD%93%E9%AA%8C/">Docker 学习笔记（一）- Docker初体验</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/11/12/%E5%88%A9%E7%94%A8Morris-Traversal%E6%96%B9%E6%B3%95%E9%81%8D%E5%8E%86%E4%BA%8C%E5%8F%89%E6%A0%91/">利用Morris Traversal方法遍历二叉树</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/09/11/%E5%88%A9%E7%94%A8%E7%BA%BF%E6%AE%B5%E6%A0%91%E8%A7%A3%E5%86%B3%E5%8C%BA%E9%97%B4%E6%9C%80%E5%80%BC%E6%9F%A5%E8%AF%A2-RMQ-%E9%97%AE%E9%A2%98/">利用线段树和ST算法解决区间最值查询(RMQ)问题</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/09/09/%E7%BA%BF%E6%AE%B5%E6%A0%91%E5%B0%8F%E8%AE%B0/">线段树小记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/08/15/%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95%E4%B8%8E%E8%B5%AB%E5%A4%AB%E6%9B%BC%E7%BC%96%E7%A0%81-Huffman-Code/">贪心算法与赫夫曼编码(Huffman Code)</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/08/14/Java%E9%87%8C%E7%9A%84%E5%BA%8F%E5%88%97%E5%8C%96%E5%8F%8A%E5%BA%8F%E5%88%97%E5%8C%96%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/">Java里的序列化及序列化代理模式</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/08/14/Scala%E9%87%8C%E7%9A%84%E9%9A%90%E5%BC%8F%E7%B1%BB%E5%9E%8B%E7%BA%A6%E6%9D%9F-Implicit-Type-Bounds/">Scala学习笔记（十）- Scala里的隐式类型约束(Implicit Type Bounds)</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/08/11/%E5%88%A9%E7%94%A8%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95%E8%A7%A3%E5%86%B3%E6%B4%BB%E5%8A%A8%E9%80%89%E6%8B%A9%E9%97%AE%E9%A2%98/">利用贪心算法解决活动选择问题</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/08/09/%E5%88%A9%E7%94%A8%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E6%9E%84%E9%80%A0%E9%9C%8D%E5%A4%AB%E6%9B%BC%E6%A0%91-Huffman-Tree/">利用动态规划构造霍夫曼树(Huffman Tree)</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/08/05/Scala%E9%87%8C%E7%9A%84%E5%AD%98%E5%9C%A8%E7%B1%BB%E5%9E%8B/">Scala学习笔记（九）- Scala里的存在类型</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/08/04/%E5%88%A9%E7%94%A8%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E8%A7%A3%E5%86%B3%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97-LCS-%E9%97%AE%E9%A2%98/">利用动态规划解决最长公共子序列(LCS)问题</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/08/02/Scala%E4%B8%AD%E7%9A%84%E7%BB%93%E6%9E%84%E5%8C%96%E7%B1%BB%E5%9E%8B/">Scala学习笔记（八）- Scala中的结构化类型(Structural Type)</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/07/29/%E6%B5%85%E8%B0%88Java%E4%B8%AD%E7%9A%84%E6%9E%9A%E4%B8%BE%E7%B1%BB%E5%9E%8B/">浅谈Java中的枚举类型</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/07/27/Scala%E4%B8%AD%E7%9A%84%E8%B7%AF%E5%BE%84%E4%BE%9D%E8%B5%96%E7%B1%BB%E5%9E%8B%E5%92%8C%E7%B1%BB%E5%9E%8B%E6%B3%A8%E5%85%A5/">Scala学习笔记（七）- Scala中的路径依赖类型(Path-dependent Type)和类型注入(Type Projection)</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/07/27/%E5%88%A9%E7%94%A8%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E8%A7%A3%E5%86%B3%E7%9F%A9%E9%98%B5%E9%93%BE%E4%B9%98%E6%B3%95%E9%97%AE%E9%A2%98/">利用动态规划解决矩阵链乘法问题</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/07/26/Scala%E4%B8%AD%E7%9A%84%E9%9A%90%E5%BC%8F%E8%BD%AC%E6%8D%A2%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%A0%94/">Scala学习笔记（六）- Scala中的隐式转换系统</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/07/22/%E5%88%A9%E7%94%A8%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E8%A7%A3%E5%86%B3%E9%92%A2%E6%9D%A1%E5%88%87%E5%89%B2%E9%97%AE%E9%A2%98/">利用动态规划解决钢条切割问题</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/07/09/Scala%E4%B8%AD%E7%9A%84%EF%BC%82%E8%87%B4%E5%91%BD%E9%92%BB%E7%9F%B3%E9%97%AE%E9%A2%98%EF%BC%82/">Scala学习笔记（五）- Scala中的＂致命钻石问题＂</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/07/08/Scala%E4%B8%AD%E5%91%BD%E5%90%8D%E5%8F%82%E6%95%B0%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B0%8F%E5%9D%91%EF%BC%88%E6%88%AA%E8%87%B3Scala2-12-2%EF%BC%89/">Scala学习笔记（四）- Scala中命名参数的一个小坑（截至Scala2.12.2）</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/07/07/%E5%B0%BE%E9%80%92%E5%BD%92%E8%B0%83%E7%A0%94%E7%AC%94%E8%AE%B0/">尾递归调研笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/07/03/Java%E4%B8%AD%E6%B6%88%E9%99%A4%E8%BF%87%E6%9C%9F%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%BC%95%E7%94%A8/">Java中消除过期的对象引用</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/06/25/%E5%9C%A8vim%E4%B8%AD%E4%BF%9D%E5%AD%98%E6%AD%A3%E5%9C%A8%E7%BC%96%E8%BE%91%E7%9A%84%E6%96%87%E4%BB%B6%E8%80%8C%E4%B8%8D%E9%9C%80%E8%A6%81%E5%BF%85%E8%A6%81%E7%9A%84%E6%9D%83%E9%99%90/">在vim中保存正在编辑的文件而不需要必要的权限</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/06/19/Java%E4%B8%AD%E6%9E%84%E9%80%A0%E5%99%A8%E5%92%8C%E5%8D%95%E4%BE%8B%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9B%E5%BB%BA/">Java中构造器和单例对象的创建</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/06/18/Java%E4%B8%AD%E9%81%BF%E5%85%8D%E5%88%9B%E5%BB%BA%E4%B8%8D%E5%BF%85%E8%A6%81%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%96%B9%E6%B3%95/">Java中避免创建不必要对象的方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/06/08/Scala%E4%B8%AD%E5%AF%B9%E8%B1%A1%E7%9B%B8%E7%AD%89%E6%80%A7%E5%B0%8F%E8%AE%B0/">Scala学习笔记（三）- Scala中对象相等性</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/05/24/Scala%E7%9A%84%E4%BC%A0%E5%80%BC%E5%92%8C%E4%BC%A0%E5%90%8D%E5%87%BD%E6%95%B0%E5%B0%8F%E8%AE%B0/">Scala学习笔记（二）- Scala的传值和传名函数</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/04/25/%E9%80%9A%E7%94%A8%E5%90%8E%E7%BC%80%E6%A0%91%E5%B9%B6%E8%A1%8C%E5%8C%96%E6%9E%84%E5%BB%BA%E7%AE%97%E6%B3%95%E6%80%9D%E8%B7%AF/">通用后缀树并行化构建算法思路</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/04/04/yum%E5%AE%89%E8%A3%85CDH-Hadoop-HA%E6%A8%A1%E5%BC%8F/">yum 安装 CDH Hadoop (HA模式)</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2017/01/03/Scala%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AF%AD%E6%B3%95%E7%B3%96%E5%92%8C%E7%89%B9%E6%80%A7/">Scala学习笔记（一）- Scala的一些语法糖和特性</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2016/11/22/KMP%E7%AE%97%E6%B3%95%E5%B0%8F%E7%BB%93/">KMP算法小结</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2016/07/30/Cpp%E4%B8%ADchar-%EF%BC%8Cconst-char-%EF%BC%8Cstring%E7%9A%84%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2/">C++ 中char*，const char*，string的相互转换</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2017-2022 Hazza Cheng
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_uv">
+                      您是第 <span id="busuanzi_value_site_uv"></span> 位小伙伴
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+                    </span>
+                
+                <span>| </span>
+                <span class="post-count">  已经写了 610.5k 字啦</span>
+            </div>
+        
+        </br>
+        <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+        <script>
+            var now = new Date(); 
+            function createtime(){ var grt= new Date("04/02/2017 11:02:49");//此处修改你的建站时间或者网站上线时间 
+            now.setTime(now.getTime()+250); 
+            days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+            hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+            if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+            mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+            seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+            snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+            document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 "; 
+            document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; } 
+            setInterval("createtime()",250);
+        </script>
+    </div>
+</footer>
+
+    </div>
+    
+    
+<script src="/js/GithubRepoWidget.js"></script>
+
+
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script src="//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        $("a[target=_blank]").removeAttr("target");
+    
+</script>
+
+    <script>
+        var originTitle = document.title;
+        var titleTime;
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                document.title = "(つェ⊂) 我藏好了哦~ " + originTitle;
+                clearTimeout(titleTime);
+            }
+            else {
+                document.title = "(*´∇｀*) 被你发现啦~ " + originTitle;
+                titleTime = setTimeout(function() {
+                    document.title = originTitle;
+                }, 2000);
+            }
+        })
+    </script>
+
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  </div>
+</body>
+</html>
