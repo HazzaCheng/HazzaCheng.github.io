@@ -354,9 +354,9 @@ AAAI2020，本文对它作一个简单的笔记。&lt;/p&gt;</summary>
     
     <category term="NAS" scheme="http://chengfeng96.com/tags/NAS/"/>
     
-    <category term="NAO" scheme="http://chengfeng96.com/tags/NAO/"/>
-    
     <category term="SemiNAS" scheme="http://chengfeng96.com/tags/SemiNAS/"/>
+    
+    <category term="NAO" scheme="http://chengfeng96.com/tags/NAO/"/>
     
   </entry>
   
@@ -470,9 +470,9 @@ sampling 改成了公平采样，本文对它做简单的笔记。&lt;/p&gt;</su
     
     <category term="NAS" scheme="http://chengfeng96.com/tags/NAS/"/>
     
-    <category term="One-Shot" scheme="http://chengfeng96.com/tags/One-Shot/"/>
-    
     <category term="Weights Sharing" scheme="http://chengfeng96.com/tags/Weights-Sharing/"/>
+    
+    <category term="One-Shot" scheme="http://chengfeng96.com/tags/One-Shot/"/>
     
     <category term="SinglePath" scheme="http://chengfeng96.com/tags/SinglePath/"/>
     
@@ -517,9 +517,9 @@ evolutionary algorithm，本文对它做简单的笔记。&lt;/p&gt;</summary>
     
     <category term="NAS" scheme="http://chengfeng96.com/tags/NAS/"/>
     
-    <category term="One-Shot" scheme="http://chengfeng96.com/tags/One-Shot/"/>
-    
     <category term="Weights Sharing" scheme="http://chengfeng96.com/tags/Weights-Sharing/"/>
+    
+    <category term="One-Shot" scheme="http://chengfeng96.com/tags/One-Shot/"/>
     
     <category term="Evolutionary Algorithm" scheme="http://chengfeng96.com/tags/Evolutionary-Algorithm/"/>
     
@@ -560,9 +560,9 @@ evolutionary algorithm，本文对它做简单的笔记。&lt;/p&gt;</summary>
     
     <category term="NAS" scheme="http://chengfeng96.com/tags/NAS/"/>
     
-    <category term="NAO" scheme="http://chengfeng96.com/tags/NAO/"/>
-    
     <category term="LSTM" scheme="http://chengfeng96.com/tags/LSTM/"/>
+    
+    <category term="NAO" scheme="http://chengfeng96.com/tags/NAO/"/>
     
     <category term="encoder" scheme="http://chengfeng96.com/tags/encoder/"/>
     
@@ -678,10 +678,6 @@ Trace）是强化学习中一种非常基础的机制，它可以使时序差分
     
     <category term="Q-learning" scheme="http://chengfeng96.com/tags/Q-learning/"/>
     
-    <category term="on-policy" scheme="http://chengfeng96.com/tags/on-policy/"/>
-    
-    <category term="off-policy" scheme="http://chengfeng96.com/tags/off-policy/"/>
-    
     <category term="Temporal-Difference Learning" scheme="http://chengfeng96.com/tags/Temporal-Difference-Learning/"/>
     
     <category term="Eligibility Trace" scheme="http://chengfeng96.com/tags/Eligibility-Trace/"/>
@@ -691,6 +687,10 @@ Trace）是强化学习中一种非常基础的机制，它可以使时序差分
     <category term="Accumulating Trace" scheme="http://chengfeng96.com/tags/Accumulating-Trace/"/>
     
     <category term="Replacing Trace" scheme="http://chengfeng96.com/tags/Replacing-Trace/"/>
+    
+    <category term="on-policy" scheme="http://chengfeng96.com/tags/on-policy/"/>
+    
+    <category term="off-policy" scheme="http://chengfeng96.com/tags/off-policy/"/>
     
     <category term="SARSA" scheme="http://chengfeng96.com/tags/SARSA/"/>
     
@@ -812,15 +812,15 @@ Learning）不需要等到回合结束也可以更新价值估计，并且不仅
     
     <category term="Q-learning" scheme="http://chengfeng96.com/tags/Q-learning/"/>
     
+    <category term="Temporal-Difference Learning" scheme="http://chengfeng96.com/tags/Temporal-Difference-Learning/"/>
+    
     <category term="on-policy" scheme="http://chengfeng96.com/tags/on-policy/"/>
     
     <category term="off-policy" scheme="http://chengfeng96.com/tags/off-policy/"/>
     
-    <category term="Importance Sampling" scheme="http://chengfeng96.com/tags/Importance-Sampling/"/>
-    
-    <category term="Temporal-Difference Learning" scheme="http://chengfeng96.com/tags/Temporal-Difference-Learning/"/>
-    
     <category term="SARSA" scheme="http://chengfeng96.com/tags/SARSA/"/>
+    
+    <category term="Importance Sampling" scheme="http://chengfeng96.com/tags/Importance-Sampling/"/>
     
     <category term="Double Q-learning" scheme="http://chengfeng96.com/tags/Double-Q-learning/"/>
     
