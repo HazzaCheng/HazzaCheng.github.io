@@ -1145,7 +1145,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/blog/2017/07/26/Scala%E4%B8%AD%E7%9A%84%E9%9A%90%E5%BC%8F%E8%BD%AC%E6%8D%A2%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%A0%94/</loc>
+    <loc>http://chengfeng96.com/blog/2017/07/27/Scala%E4%B8%AD%E7%9A%84%E8%B7%AF%E5%BE%84%E4%BE%9D%E8%B5%96%E7%B1%BB%E5%9E%8B%E5%92%8C%E7%B1%BB%E5%9E%8B%E6%B3%A8%E5%85%A5/</loc>
     
     <lastmod>2020-06-08</lastmod>
     
@@ -1154,7 +1154,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/blog/2017/07/27/Scala%E4%B8%AD%E7%9A%84%E8%B7%AF%E5%BE%84%E4%BE%9D%E8%B5%96%E7%B1%BB%E5%9E%8B%E5%92%8C%E7%B1%BB%E5%9E%8B%E6%B3%A8%E5%85%A5/</loc>
+    <loc>http://chengfeng96.com/blog/2017/07/26/Scala%E4%B8%AD%E7%9A%84%E9%9A%90%E5%BC%8F%E8%BD%AC%E6%8D%A2%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%A0%94/</loc>
     
     <lastmod>2020-06-08</lastmod>
     
@@ -1208,7 +1208,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/blog/2019/04/25/%E4%BC%AF%E5%8A%AA%E5%88%A9%E8%BF%87%E7%A8%8B%E5%92%8C%E6%B3%8A%E6%9D%BE%E8%BF%87%E7%A8%8B%E7%AC%94%E8%AE%B0/</loc>
+    <loc>http://chengfeng96.com/blog/2018/04/09/%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7%E5%B0%8F%E7%BB%93/</loc>
     
     <lastmod>2020-06-08</lastmod>
     
@@ -1217,7 +1217,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/blog/2018/04/09/%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7%E5%B0%8F%E7%BB%93/</loc>
+    <loc>http://chengfeng96.com/blog/2019/04/25/%E4%BC%AF%E5%8A%AA%E5%88%A9%E8%BF%87%E7%A8%8B%E5%92%8C%E6%B3%8A%E6%9D%BE%E8%BF%87%E7%A8%8B%E7%AC%94%E8%AE%B0/</loc>
     
     <lastmod>2020-06-08</lastmod>
     
@@ -1271,15 +1271,6 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/blog/2019/06/08/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
-    
-    <lastmod>2020-06-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://chengfeng96.com/blog/2020/02/11/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89-Markov-%E5%86%B3%E7%AD%96%E8%BF%87%E7%A8%8B%E6%A8%A1%E5%9E%8B/</loc>
     
     <lastmod>2020-06-08</lastmod>
@@ -1298,7 +1289,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/blog/2020/02/15/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89-%E8%92%99%E7%89%B9%E5%8D%A1%E7%BD%97%E6%96%B9%E6%B3%95/</loc>
+    <loc>http://chengfeng96.com/blog/2019/06/08/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
     
     <lastmod>2020-06-08</lastmod>
     
@@ -1316,7 +1307,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/blog/2020/02/16/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89-%E6%97%B6%E5%BA%8F%E5%B7%AE%E5%88%86%E5%AD%A6%E4%B9%A0/</loc>
+    <loc>http://chengfeng96.com/blog/2020/02/15/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89-%E8%92%99%E7%89%B9%E5%8D%A1%E7%BD%97%E6%96%B9%E6%B3%95/</loc>
     
     <lastmod>2020-06-08</lastmod>
     
@@ -1326,6 +1317,15 @@
   
   <url>
     <loc>http://chengfeng96.com/blog/2020/02/28/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%85%AB%EF%BC%89-%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E7%9A%84%E7%A1%AE%E5%AE%9A%E6%80%A7%E7%AD%96%E7%95%A5/</loc>
+    
+    <lastmod>2020-06-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/blog/2020/02/16/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89-%E6%97%B6%E5%BA%8F%E5%B7%AE%E5%88%86%E5%AD%A6%E4%B9%A0/</loc>
     
     <lastmod>2020-06-08</lastmod>
     
@@ -1370,7 +1370,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/blog/2019/05/17/%E8%81%9A%E7%B1%BB%E7%AC%94%E8%AE%B0/</loc>
+    <loc>http://chengfeng96.com/blog/2018/04/06/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/</loc>
     
     <lastmod>2020-06-08</lastmod>
     
@@ -1379,7 +1379,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/blog/2018/04/06/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/</loc>
+    <loc>http://chengfeng96.com/blog/2019/05/17/%E8%81%9A%E7%B1%BB%E7%AC%94%E8%AE%B0/</loc>
     
     <lastmod>2020-06-08</lastmod>
     
@@ -1406,7 +1406,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/blog/2018/10/22/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%8F%91%E5%B8%83-%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F/</loc>
+    <loc>http://chengfeng96.com/blog/2018/09/26/%E8%AF%BB%E3%80%8A%E4%B8%96%E7%95%8C%E7%9A%84%E5%87%9B%E5%86%AC%E3%80%8B--%E5%B9%B3%E6%B0%91%E7%9A%84%E6%88%98%E4%BA%89/</loc>
     
     <lastmod>2020-06-08</lastmod>
     
@@ -1415,7 +1415,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/blog/2018/09/26/%E8%AF%BB%E3%80%8A%E4%B8%96%E7%95%8C%E7%9A%84%E5%87%9B%E5%86%AC%E3%80%8B--%E5%B9%B3%E6%B0%91%E7%9A%84%E6%88%98%E4%BA%89/</loc>
+    <loc>http://chengfeng96.com/blog/2018/10/22/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%8F%91%E5%B8%83-%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F/</loc>
     
     <lastmod>2020-06-08</lastmod>
     
@@ -1541,6 +1541,15 @@
   </url>
   
   <url>
+    <loc>http://chengfeng96.com/blog/2018/10/21/%E8%AF%BB%E3%80%8A%E6%BC%AB%E6%AD%A5%E5%8D%8E%E5%B0%94%E8%A1%97%E3%80%8B--%E5%9C%A8%E9%9A%8F%E6%9C%BA%E4%B8%AD%E6%BC%AB%E6%AD%A5%EF%BC%8C%E5%9C%A8%E9%9A%8F%E6%9C%BA%E4%B8%AD%E7%A8%B3%E5%AE%9A/</loc>
+    
+    <lastmod>2020-06-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://chengfeng96.com/blog/2019/07/26/%E8%AF%BB%E3%80%8A%E8%87%AA%E7%A7%81%E7%9A%84%E5%9F%BA%E5%9B%A0%E3%80%8B-%E7%88%B6%E6%AF%8D%E4%B8%BA%E5%95%A5%E6%80%BB%E6%98%AF%E6%97%A0%E7%A7%81%E7%9A%84/</loc>
     
     <lastmod>2020-06-08</lastmod>
@@ -1550,7 +1559,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/blog/2018/10/21/%E8%AF%BB%E3%80%8A%E6%BC%AB%E6%AD%A5%E5%8D%8E%E5%B0%94%E8%A1%97%E3%80%8B--%E5%9C%A8%E9%9A%8F%E6%9C%BA%E4%B8%AD%E6%BC%AB%E6%AD%A5%EF%BC%8C%E5%9C%A8%E9%9A%8F%E6%9C%BA%E4%B8%AD%E7%A8%B3%E5%AE%9A/</loc>
+    <loc>http://chengfeng96.com/blog/2019/02/23/%E8%AF%BB%E3%80%8A%E8%8D%92%E8%AF%9E%E5%8C%BB%E5%AD%A6%E5%8F%B2%E3%80%8B--%E5%8C%BB%E5%AD%A6%E7%9A%84%E8%BF%9B%E6%AD%A5/</loc>
     
     <lastmod>2020-06-08</lastmod>
     
@@ -1568,7 +1577,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/blog/2019/02/23/%E8%AF%BB%E3%80%8A%E8%8D%92%E8%AF%9E%E5%8C%BB%E5%AD%A6%E5%8F%B2%E3%80%8B--%E5%8C%BB%E5%AD%A6%E7%9A%84%E8%BF%9B%E6%AD%A5/</loc>
+    <loc>http://chengfeng96.com/blog/2019/09/08/%E8%B4%9D%E5%8F%B6%E6%96%AF%E4%BC%98%E5%8C%96%E7%AC%94%E8%AE%B0/</loc>
     
     <lastmod>2020-06-08</lastmod>
     
@@ -1595,7 +1604,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/blog/2019/09/08/%E8%B4%9D%E5%8F%B6%E6%96%AF%E4%BC%98%E5%8C%96%E7%AC%94%E8%AE%B0/</loc>
+    <loc>http://chengfeng96.com/blog/2019/05/13/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
     
     <lastmod>2020-06-08</lastmod>
     
@@ -1622,15 +1631,6 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/blog/2019/05/13/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
-    
-    <lastmod>2020-06-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://chengfeng96.com/blog/2019/04/10/BP%E7%AE%97%E6%B3%95%E7%9A%84%E6%8E%A8%E5%AF%BC/</loc>
     
     <lastmod>2020-06-08</lastmod>
@@ -1649,7 +1649,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/blog/2018/11/30/Hadoop%E5%92%8CSpark%E6%A0%B9%E6%8D%AElog4j%E8%87%AA%E5%AE%9A%E4%B9%89%E6%97%A5%E5%BF%97%E8%BE%93%E5%87%BA/</loc>
+    <loc>http://chengfeng96.com/blog/2019/01/27/Hadoop%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%8E%A8%E6%B5%8B%E6%89%A7%E8%A1%8C%E7%AE%97%E6%B3%95/</loc>
     
     <lastmod>2020-06-08</lastmod>
     
@@ -1658,7 +1658,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/blog/2019/01/27/Hadoop%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%8E%A8%E6%B5%8B%E6%89%A7%E8%A1%8C%E7%AE%97%E6%B3%95/</loc>
+    <loc>http://chengfeng96.com/blog/2018/11/30/Hadoop%E5%92%8CSpark%E6%A0%B9%E6%8D%AElog4j%E8%87%AA%E5%AE%9A%E4%B9%89%E6%97%A5%E5%BF%97%E8%BE%93%E5%87%BA/</loc>
     
     <lastmod>2020-06-08</lastmod>
     
@@ -1712,6 +1712,15 @@
   </url>
   
   <url>
+    <loc>http://chengfeng96.com/blog/2017/07/03/Java%E4%B8%AD%E6%B6%88%E9%99%A4%E8%BF%87%E6%9C%9F%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%BC%95%E7%94%A8/</loc>
+    
+    <lastmod>2019-07-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://chengfeng96.com/blog/2017/06/19/Java%E4%B8%AD%E6%9E%84%E9%80%A0%E5%99%A8%E5%92%8C%E5%8D%95%E4%BE%8B%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9B%E5%BB%BA/</loc>
     
     <lastmod>2019-07-01</lastmod>
@@ -1722,15 +1731,6 @@
   
   <url>
     <loc>http://chengfeng96.com/blog/2017/06/18/Java%E4%B8%AD%E9%81%BF%E5%85%8D%E5%88%9B%E5%BB%BA%E4%B8%8D%E5%BF%85%E8%A6%81%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%96%B9%E6%B3%95/</loc>
-    
-    <lastmod>2019-07-01</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/blog/2017/07/03/Java%E4%B8%AD%E6%B6%88%E9%99%A4%E8%BF%87%E6%9C%9F%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%BC%95%E7%94%A8/</loc>
     
     <lastmod>2019-07-01</lastmod>
     
@@ -1841,6 +1841,27 @@
   </url>
   
   <url>
+    <loc>http://chengfeng96.com/tags/DL/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/BP/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Gradient-Descent/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://chengfeng96.com/tags/%E7%B4%A2%E5%BC%95/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -1876,28 +1897,21 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/DL/</loc>
+    <loc>http://chengfeng96.com/tags/C/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/BP/</loc>
+    <loc>http://chengfeng96.com/tags/char/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/Gradient-Descent/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Dijkstra/</loc>
+    <loc>http://chengfeng96.com/tags/string/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -1953,6 +1967,13 @@
   </url>
   
   <url>
+    <loc>http://chengfeng96.com/tags/Dijkstra/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://chengfeng96.com/tags/docker/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -1968,27 +1989,6 @@
   
   <url>
     <loc>http://chengfeng96.com/tags/cloud-cmputing/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/images/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Dockerfile/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/cloud-computing/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2023,21 +2023,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/C/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/char/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/string/</loc>
+    <loc>http://chengfeng96.com/tags/cloud-computing/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2051,21 +2037,21 @@
   </url>
   
   <url>
+    <loc>http://chengfeng96.com/tags/images/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Dockerfile/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://chengfeng96.com/tags/Hadoop/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/HDFS/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Speculative-Task/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2079,13 +2065,6 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/MRv1/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://chengfeng96.com/tags/Shuffle/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -2093,14 +2072,70 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/Spark/</loc>
+    <loc>http://chengfeng96.com/tags/HDFS/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/log4j/</loc>
+    <loc>http://chengfeng96.com/tags/Hedged-Read/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/MRv1/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Speculative-Task/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/LATE/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/SAMR/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/YARN/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Java/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/JVM/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Mark-Word/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2129,27 +2164,6 @@
   
   <url>
     <loc>http://chengfeng96.com/tags/EI/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Java/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/JVM/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Mark-Word/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2191,27 +2205,6 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/LATE/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/SAMR/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/YARN/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://chengfeng96.com/tags/handle/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -2219,49 +2212,14 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/Hedged-Read/</loc>
+    <loc>http://chengfeng96.com/tags/Spark/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/jps/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/jstat/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/jinfo/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/jmao/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/jstack/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/VisualVM/</loc>
+    <loc>http://chengfeng96.com/tags/log4j/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2269,6 +2227,13 @@
   
   <url>
     <loc>http://chengfeng96.com/tags/direct-memory/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/%E8%BF%87%E6%9C%9F%E5%AF%B9%E8%B1%A1/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2331,6 +2296,34 @@
   </url>
   
   <url>
+    <loc>http://chengfeng96.com/tags/ArrayDeque/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/LinkedList/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Deque/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Stack/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://chengfeng96.com/tags/%E5%B9%B6%E5%8F%91/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -2338,7 +2331,126 @@
   </url>
   
   <url>
+    <loc>http://chengfeng96.com/tags/Synchronizer/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/AQS/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/ReenTrantLock/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/FutureTask/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Semaphore/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/CountDownLatch/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/ReentrantReadWriteLock/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://chengfeng96.com/tags/Future/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Executor/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/CompletionService/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Callable/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/invokeAll/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/jps/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/jstat/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/jinfo/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/jmao/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/jstack/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/VisualVM/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2387,28 +2499,35 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/ArrayDeque/</loc>
+    <loc>http://chengfeng96.com/tags/Sequential-Consistency/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/LinkedList/</loc>
+    <loc>http://chengfeng96.com/tags/Reordering/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/Deque/</loc>
+    <loc>http://chengfeng96.com/tags/Happens-Before/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/Stack/</loc>
+    <loc>http://chengfeng96.com/tags/Piggyback/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/DCL/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2464,6 +2583,83 @@
   </url>
   
   <url>
+    <loc>http://chengfeng96.com/tags/Reentrant-Lock/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Polled-Lock/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Timed-Lock/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Interruptible-Lock/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Fair-Lock/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Read-Write-Lock/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Condition-Queue/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Deadlock/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Livelock/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Open-Call/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Starvation/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://chengfeng96.com/tags/ConcurrentHashMap/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -2513,119 +2709,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/FutureTask/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://chengfeng96.com/tags/semaphore/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Sequential-Consistency/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Reordering/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Happens-Before/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Piggyback/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/DCL/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Executor/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/CompletionService/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Callable/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/invokeAll/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Synchronizer/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/AQS/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/ReenTrantLock/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Semaphore/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/CountDownLatch/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/ReentrantReadWriteLock/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2730,63 +2814,21 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/Deadlock/</loc>
+    <loc>http://chengfeng96.com/tags/Johnson/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/Livelock/</loc>
+    <loc>http://chengfeng96.com/tags/Kruskal/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/Open-Call/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Starvation/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/CAS/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Optimistic-Lock/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Pessimistic-Lock/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Atomic/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/ConcurrentLinkedQueue/</loc>
+    <loc>http://chengfeng96.com/tags/MST/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2870,98 +2912,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/Reentrant-Lock/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Polled-Lock/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Timed-Lock/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Interruptible-Lock/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Fair-Lock/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Read-Write-Lock/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Condition-Queue/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Johnson/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://chengfeng96.com/tags/KMP/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/LSM/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Append-only-Tree/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/%E8%BF%87%E6%9C%9F%E5%AF%B9%E8%B1%A1/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Kruskal/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/MST/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2976,6 +2927,20 @@
   
   <url>
     <loc>http://chengfeng96.com/tags/rm/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/LSM/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Append-only-Tree/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -3017,7 +2982,49 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/Weights-Sharing/</loc>
+    <loc>http://chengfeng96.com/tags/NAO/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/LSTM/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/encoder/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/decoder/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/sequence-to-sequence/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/ENAS/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/SMASH/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -3025,6 +3032,13 @@
   
   <url>
     <loc>http://chengfeng96.com/tags/One-Shot/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Weights-Sharing/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -3053,27 +3067,6 @@
   
   <url>
     <loc>http://chengfeng96.com/tags/FairNAS/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/ENAS/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/LSTM/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/SMASH/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -3143,13 +3136,6 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/SNAS/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://chengfeng96.com/tags/NASP/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -3164,14 +3150,56 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/SemiNAS/</loc>
+    <loc>http://chengfeng96.com/tags/SNAS/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/NAO/</loc>
+    <loc>http://chengfeng96.com/tags/P-DARTS/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/CAS/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Optimistic-Lock/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Pessimistic-Lock/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Atomic/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/ConcurrentLinkedQueue/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/SemiNAS/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -3186,20 +3214,6 @@
   
   <url>
     <loc>http://chengfeng96.com/tags/NoisyDARTS/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/P-DARTS/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Fair-DARTS/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -3227,21 +3241,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/encoder/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/decoder/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/sequence-to-sequence/</loc>
+    <loc>http://chengfeng96.com/tags/Fair-DARTS/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -3256,6 +3256,13 @@
   
   <url>
     <loc>http://chengfeng96.com/tags/adjacency-matrix/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/SPFA/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -3277,48 +3284,6 @@
   
   <url>
     <loc>http://chengfeng96.com/tags/ROAR/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/SPFA/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/scala/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/functional-programming/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/type/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/path-dependent-type/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/structural-type/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -3374,6 +3339,76 @@
   </url>
   
   <url>
+    <loc>http://chengfeng96.com/tags/scala/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/functional-programming/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/type/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/path-dependent-type/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/structural-type/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/type-projection/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/trait/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/abstract-class/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/override/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/mutiply-inheritance/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://chengfeng96.com/tags/implicit/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -3416,6 +3451,13 @@
   </url>
   
   <url>
+    <loc>http://chengfeng96.com/tags/existential-type/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://chengfeng96.com/tags/variance/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -3445,83 +3487,6 @@
   
   <url>
     <loc>http://chengfeng96.com/tags/higher-kinded-types/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/existential-type/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/trait/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/abstract-class/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/override/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/mutiply-inheritance/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/type-projection/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/context-bounds/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/view-bounds/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/manifest/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/ClassTag/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/specialized-method/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -3563,6 +3528,41 @@
   </url>
   
   <url>
+    <loc>http://chengfeng96.com/tags/context-bounds/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/view-bounds/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/manifest/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/ClassTag/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/specialized-method/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://chengfeng96.com/tags/history-sever/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -3591,6 +3591,13 @@
   </url>
   
   <url>
+    <loc>http://chengfeng96.com/tags/history-server/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://chengfeng96.com/tags/yum/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -3612,7 +3619,28 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/history-server/</loc>
+    <loc>http://chengfeng96.com/tags/Simple-Factory-Pattern/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Factory-Method-Pattern/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Abstract-Factory-Pattern/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/reflect/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -3682,28 +3710,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/Simple-Factory-Pattern/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Factory-Method-Pattern/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Abstract-Factory-Pattern/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/reflect/</loc>
+    <loc>http://chengfeng96.com/tags/bit-manipulation/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -3794,7 +3801,70 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/bit-manipulation/</loc>
+    <loc>http://chengfeng96.com/tags/Decision-Tree/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Information-Entropy/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Information-Gain/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Information-Gain-Ratio/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Gini-Index/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/ID3/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/C4-5/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/CART/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Multivariate-Decision-Tree/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Univariate-Decision-Tree/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -3962,76 +4032,6 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/Decision-Tree/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Information-Entropy/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Information-Gain/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Information-Gain-Ratio/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Gini-Index/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/ID3/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/C4-5/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/CART/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Multivariate-Decision-Tree/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Univariate-Decision-Tree/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://chengfeng96.com/tags/segment-tree/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -4081,13 +4081,6 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/python/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://chengfeng96.com/tags/Bayesian-Statistical-Inference/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -4116,112 +4109,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/maxium-flow/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/augmenting-path/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Ford-Fulkerson/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Edmonds-Karp/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/MDS/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Calculus/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Gradient/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Derivative/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Total-Derivative/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Partial-Derivative/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Directional-Derivative/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Logistic-Regression/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/SGD/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/BGD/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/tail-recursion/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/big-integer/</loc>
+    <loc>http://chengfeng96.com/tags/python/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -4277,168 +4165,84 @@
   </url>
   
   <url>
+    <loc>http://chengfeng96.com/tags/MDS/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Calculus/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Gradient/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Derivative/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Total-Derivative/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Partial-Derivative/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Directional-Derivative/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/maxium-flow/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/augmenting-path/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Ford-Fulkerson/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Edmonds-Karp/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://chengfeng96.com/tags/sort/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Uniform-Distribution/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Exponential-Distribution/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Normal-Distribution/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/PDF/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/CDF/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Mean/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Variance/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Reinforcement-Learning/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/MDP/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/K-armed-bandit/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Exploration-Exploitation-dilemma/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/epsilon-Greedy/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Softmax/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/policy-iteration/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/value-iteration/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Monte-Carlo-Learning/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Temporal-Difference-Learning/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Sarsa/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Q-learning/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Imitation-Learning/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Bellman-Expectation-Equation/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/policy-evaluation/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Bellman-Optimal-Equation/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -4481,6 +4285,118 @@
   
   <url>
     <loc>http://chengfeng96.com/tags/PMF/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Mean/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Variance/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Logistic-Regression/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/SGD/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/BGD/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/tail-recursion/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/big-integer/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Uniform-Distribution/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Exponential-Distribution/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Normal-Distribution/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/PDF/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/CDF/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/MDP/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Bellman-Expectation-Equation/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/policy-evaluation/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Bellman-Optimal-Equation/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -4543,6 +4459,97 @@
   </url>
   
   <url>
+    <loc>http://chengfeng96.com/tags/Q-learning/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/policy-improvement/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/policy-iteration/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/value-iteration/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Reinforcement-Learning/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/K-armed-bandit/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Exploration-Exploitation-dilemma/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/epsilon-Greedy/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Softmax/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Monte-Carlo-Learning/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Temporal-Difference-Learning/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Sarsa/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Imitation-Learning/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://chengfeng96.com/tags/Monte-Carlo-Methods/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -4592,7 +4599,56 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/policy-improvement/</loc>
+    <loc>http://chengfeng96.com/tags/Policy-Gradient/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Actor%E2%80%93Critic/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/DQN/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/DPG/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/DDPG/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/experience-repaly/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/target-network/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/TD3/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -4620,27 +4676,6 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/DQN/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/experience-repaly/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/target-network/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://chengfeng96.com/tags/Double-DQN/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -4662,13 +4697,6 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/Policy-Gradient/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://chengfeng96.com/tags/Action-Preference-Function/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -4683,42 +4711,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/Actor%E2%80%93Critic/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://chengfeng96.com/tags/Double-Q-learning/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/DPG/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/DDPG/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/TD3/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/maximum-bipartite-matching/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -4732,7 +4725,70 @@
   </url>
   
   <url>
+    <loc>http://chengfeng96.com/tags/maximum-bipartite-matching/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://chengfeng96.com/tags/fast-matrix-exponentiation/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Markov-s-Inequality/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Chebyshev-s-Inequality/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Jensen-s-Inequality/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Hoeffding-s-Inequality/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Central-Limit-Theorem/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Law-of-Large-Numbers/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Weak-Law-of-Large-Numbers/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Strong-Law-of-Large-Numbers/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -4886,62 +4942,6 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/Markov-s-Inequality/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Chebyshev-s-Inequality/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Jensen-s-Inequality/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Hoeffding-s-Inequality/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Central-Limit-Theorem/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Law-of-Large-Numbers/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Weak-Law-of-Large-Numbers/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Strong-Law-of-Large-Numbers/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://chengfeng96.com/tags/%E6%9E%9A%E4%B8%BE/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -4964,6 +4964,48 @@
   
   <url>
     <loc>http://chengfeng96.com/tags/EnumMap/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Linear-Algebra/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Adjoint/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Self-Adjont/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Normal/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Isometry/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Spectral-Theorem/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -5047,42 +5089,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/Linear-Algebra/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Adjoint/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Self-Adjont/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Normal/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Isometry/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Spectral-Theorem/</loc>
+    <loc>http://chengfeng96.com/tags/graph-database/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -5111,6 +5118,13 @@
   
   <url>
     <loc>http://chengfeng96.com/tags/Unitary-Matrix/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Strategy-Pattern/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -5180,34 +5194,6 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/graph-database/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Strategy-Pattern/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Observer-Pattern/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Publish-Subscribe-Pattern/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://chengfeng96.com/tags/Classical-Statistical-Inference/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -5258,6 +5244,41 @@
   
   <url>
     <loc>http://chengfeng96.com/tags/Chi-Squared-Test/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Observer-Pattern/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Publish-Subscribe-Pattern/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Acquisition-function/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/PI/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/UCB/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -5327,41 +5348,6 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/Acquisition-function/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/PI/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/UCB/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/skiplist/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/leveldb/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://chengfeng96.com/tags/HuffmanCode/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -5376,42 +5362,14 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/generalized-suffix-tree/</loc>
+    <loc>http://chengfeng96.com/tags/skiplist/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/tags/HMM/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Baum-Welch/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Viterbi/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/Markov-Chain/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/tags/C-K-Equation/</loc>
+    <loc>http://chengfeng96.com/tags/leveldb/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -5459,6 +5417,48 @@
     <priority>0.2</priority>
   </url>
   
+  <url>
+    <loc>http://chengfeng96.com/tags/generalized-suffix-tree/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/HMM/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Baum-Welch/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Viterbi/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/Markov-Chain/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/tags/C-K-Equation/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
 
   
   <url>
@@ -5483,14 +5483,14 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/categories/AI/Machine-Learning/</loc>
+    <loc>http://chengfeng96.com/categories/AI/AutoML/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/categories/AI/AutoML/</loc>
+    <loc>http://chengfeng96.com/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -5511,6 +5511,13 @@
   </url>
   
   <url>
+    <loc>http://chengfeng96.com/categories/AI/Machine-Learning/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://chengfeng96.com/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%A4%9A%E8%B7%AF%E5%B9%B3%E8%A1%A1%E6%A0%91/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -5518,14 +5525,21 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/</loc>
+    <loc>http://chengfeng96.com/categories/AI/AutoML/HPO/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/categories/AI/AutoML/HPO/</loc>
+    <loc>http://chengfeng96.com/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Go/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/C/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -5560,20 +5574,6 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/C/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Go/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://chengfeng96.com/categories/Big-Data/Hadoop/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -5581,21 +5581,14 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/LSM/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://chengfeng96.com/categories/Big-Data/Spark/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://chengfeng96.com/categories/Linux/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/LSM/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -5623,14 +5616,21 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Scala/</loc>
+    <loc>http://chengfeng96.com/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Java/%E5%B9%B6%E5%8F%91/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/categories/Math/</loc>
+    <loc>http://chengfeng96.com/categories/Big-Data/Spark/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Scala/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -5644,7 +5644,7 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Java/%E5%B9%B6%E5%8F%91/</loc>
+    <loc>http://chengfeng96.com/categories/Math/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -5693,13 +5693,6 @@
   </url>
   
   <url>
-    <loc>http://chengfeng96.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/skiplist/</loc>
-    <lastmod>2022-10-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://chengfeng96.com/categories/Math/Probability-Statistics/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
@@ -5715,6 +5708,13 @@
   
   <url>
     <loc>http://chengfeng96.com/categories/Math/Linear-Algebra/</loc>
+    <lastmod>2022-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://chengfeng96.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/skiplist/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

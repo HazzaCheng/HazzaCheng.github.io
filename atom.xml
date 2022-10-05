@@ -354,9 +354,9 @@ AAAI2020，本文对它作一个简单的笔记。&lt;/p&gt;</summary>
     
     <category term="NAS" scheme="http://chengfeng96.com/tags/NAS/"/>
     
-    <category term="SemiNAS" scheme="http://chengfeng96.com/tags/SemiNAS/"/>
-    
     <category term="NAO" scheme="http://chengfeng96.com/tags/NAO/"/>
+    
+    <category term="SemiNAS" scheme="http://chengfeng96.com/tags/SemiNAS/"/>
     
   </entry>
   
@@ -470,9 +470,9 @@ sampling 改成了公平采样，本文对它做简单的笔记。&lt;/p&gt;</su
     
     <category term="NAS" scheme="http://chengfeng96.com/tags/NAS/"/>
     
-    <category term="Weights Sharing" scheme="http://chengfeng96.com/tags/Weights-Sharing/"/>
-    
     <category term="One-Shot" scheme="http://chengfeng96.com/tags/One-Shot/"/>
+    
+    <category term="Weights Sharing" scheme="http://chengfeng96.com/tags/Weights-Sharing/"/>
     
     <category term="SinglePath" scheme="http://chengfeng96.com/tags/SinglePath/"/>
     
@@ -517,9 +517,9 @@ evolutionary algorithm，本文对它做简单的笔记。&lt;/p&gt;</summary>
     
     <category term="NAS" scheme="http://chengfeng96.com/tags/NAS/"/>
     
-    <category term="Weights Sharing" scheme="http://chengfeng96.com/tags/Weights-Sharing/"/>
-    
     <category term="One-Shot" scheme="http://chengfeng96.com/tags/One-Shot/"/>
+    
+    <category term="Weights Sharing" scheme="http://chengfeng96.com/tags/Weights-Sharing/"/>
     
     <category term="Evolutionary Algorithm" scheme="http://chengfeng96.com/tags/Evolutionary-Algorithm/"/>
     
@@ -560,9 +560,9 @@ evolutionary algorithm，本文对它做简单的笔记。&lt;/p&gt;</summary>
     
     <category term="NAS" scheme="http://chengfeng96.com/tags/NAS/"/>
     
-    <category term="LSTM" scheme="http://chengfeng96.com/tags/LSTM/"/>
-    
     <category term="NAO" scheme="http://chengfeng96.com/tags/NAO/"/>
+    
+    <category term="LSTM" scheme="http://chengfeng96.com/tags/LSTM/"/>
     
     <category term="encoder" scheme="http://chengfeng96.com/tags/encoder/"/>
     
@@ -633,19 +633,19 @@ q(s,a;\boldsymbol{\theta})\)&lt;/span&gt;。面对这个问题，我们可以在
     
     <category term="RL" scheme="http://chengfeng96.com/tags/RL/"/>
     
-    <category term="DQN" scheme="http://chengfeng96.com/tags/DQN/"/>
-    
-    <category term="experience repaly" scheme="http://chengfeng96.com/tags/experience-repaly/"/>
-    
-    <category term="target network" scheme="http://chengfeng96.com/tags/target-network/"/>
-    
     <category term="Policy Gradient" scheme="http://chengfeng96.com/tags/Policy-Gradient/"/>
     
     <category term="Actor–Critic" scheme="http://chengfeng96.com/tags/Actor%E2%80%93Critic/"/>
     
+    <category term="DQN" scheme="http://chengfeng96.com/tags/DQN/"/>
+    
     <category term="DPG" scheme="http://chengfeng96.com/tags/DPG/"/>
     
     <category term="DDPG" scheme="http://chengfeng96.com/tags/DDPG/"/>
+    
+    <category term="experience repaly" scheme="http://chengfeng96.com/tags/experience-repaly/"/>
+    
+    <category term="target network" scheme="http://chengfeng96.com/tags/target-network/"/>
     
     <category term="TD3" scheme="http://chengfeng96.com/tags/TD3/"/>
     
@@ -676,8 +676,6 @@ Trace）是强化学习中一种非常基础的机制，它可以使时序差分
     
     <category term="RL" scheme="http://chengfeng96.com/tags/RL/"/>
     
-    <category term="Q-learning" scheme="http://chengfeng96.com/tags/Q-learning/"/>
-    
     <category term="Temporal-Difference Learning" scheme="http://chengfeng96.com/tags/Temporal-Difference-Learning/"/>
     
     <category term="Eligibility Trace" scheme="http://chengfeng96.com/tags/Eligibility-Trace/"/>
@@ -693,6 +691,8 @@ Trace）是强化学习中一种非常基础的机制，它可以使时序差分
     <category term="off-policy" scheme="http://chengfeng96.com/tags/off-policy/"/>
     
     <category term="SARSA" scheme="http://chengfeng96.com/tags/SARSA/"/>
+    
+    <category term="Q-learning" scheme="http://chengfeng96.com/tags/Q-learning/"/>
     
   </entry>
   
@@ -725,15 +725,15 @@ Gradient）算法，它求解最优策略不一定要估计最优价值函数，
     
     <category term="Importance Sampling" scheme="http://chengfeng96.com/tags/Importance-Sampling/"/>
     
-    <category term="function approximation" scheme="http://chengfeng96.com/tags/function-approximation/"/>
-    
     <category term="Policy Gradient" scheme="http://chengfeng96.com/tags/Policy-Gradient/"/>
+    
+    <category term="Actor–Critic" scheme="http://chengfeng96.com/tags/Actor%E2%80%93Critic/"/>
+    
+    <category term="function approximation" scheme="http://chengfeng96.com/tags/function-approximation/"/>
     
     <category term="Action Preference Function" scheme="http://chengfeng96.com/tags/Action-Preference-Function/"/>
     
     <category term="REINFORCE" scheme="http://chengfeng96.com/tags/REINFORCE/"/>
-    
-    <category term="Actor–Critic" scheme="http://chengfeng96.com/tags/Actor%E2%80%93Critic/"/>
     
   </entry>
   
@@ -762,17 +762,17 @@ Gradient）算法，它求解最优策略不一定要估计最优价值函数，
     
     <category term="SGD" scheme="http://chengfeng96.com/tags/SGD/"/>
     
-    <category term="function approximation" scheme="http://chengfeng96.com/tags/function-approximation/"/>
-    
-    <category term="Semi-Gradient Descent" scheme="http://chengfeng96.com/tags/Semi-Gradient-Descent/"/>
-    
-    <category term="LSTD" scheme="http://chengfeng96.com/tags/LSTD/"/>
-    
     <category term="DQN" scheme="http://chengfeng96.com/tags/DQN/"/>
     
     <category term="experience repaly" scheme="http://chengfeng96.com/tags/experience-repaly/"/>
     
     <category term="target network" scheme="http://chengfeng96.com/tags/target-network/"/>
+    
+    <category term="function approximation" scheme="http://chengfeng96.com/tags/function-approximation/"/>
+    
+    <category term="Semi-Gradient Descent" scheme="http://chengfeng96.com/tags/Semi-Gradient-Descent/"/>
+    
+    <category term="LSTD" scheme="http://chengfeng96.com/tags/LSTD/"/>
     
     <category term="Double DQN" scheme="http://chengfeng96.com/tags/Double-DQN/"/>
     
@@ -810,8 +810,6 @@ Learning）不需要等到回合结束也可以更新价值估计，并且不仅
     
     <category term="RL" scheme="http://chengfeng96.com/tags/RL/"/>
     
-    <category term="Q-learning" scheme="http://chengfeng96.com/tags/Q-learning/"/>
-    
     <category term="Temporal-Difference Learning" scheme="http://chengfeng96.com/tags/Temporal-Difference-Learning/"/>
     
     <category term="on-policy" scheme="http://chengfeng96.com/tags/on-policy/"/>
@@ -819,6 +817,8 @@ Learning）不需要等到回合结束也可以更新价值估计，并且不仅
     <category term="off-policy" scheme="http://chengfeng96.com/tags/off-policy/"/>
     
     <category term="SARSA" scheme="http://chengfeng96.com/tags/SARSA/"/>
+    
+    <category term="Q-learning" scheme="http://chengfeng96.com/tags/Q-learning/"/>
     
     <category term="Importance Sampling" scheme="http://chengfeng96.com/tags/Importance-Sampling/"/>
     
